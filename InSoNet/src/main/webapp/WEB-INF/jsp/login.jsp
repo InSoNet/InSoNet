@@ -48,7 +48,7 @@
 	        <c:if test="${not empty msg}">
 	            <div class="msg">${msg}</div>
 	        </c:if>
-            <form  role="form" action="/InSoNet/login" method='POST'>
+            <form  role="form" action="/InSoNet/login?error" method='POST'>
                 <div class="form-group">
                     <label for="username">E-mail</label>
                     <input type="email" class="form-control" id="username" name="username" placeholder="Ingrese E-mail">

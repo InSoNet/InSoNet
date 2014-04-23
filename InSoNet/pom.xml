@@ -4,23 +4,23 @@
 	<groupId>InSoNet</groupId>
 	<artifactId>InSoNet</artifactId>
 	<packaging>war</packaging>
-	<version>0.2.0</version>
+	<version>0.3.0</version>
 	<name>InSoNet Maven Webapp</name>
-	<url>http://maven.apache.org</url>
-
+	<url>https://github.com/sergiogman/InSoNet</url>
 	<properties>
 		<hibernate.version>3.3.0.SP1</hibernate.version>
 		<!-- hibernate.version>3.3.0.GA</hibernate.version-->
 		<mysql.connector.version>5.1.21</mysql.connector.version>
-		<spring.version>3.2.2.RELEASE</spring.version>
+		<spring.version>3.2.8.RELEASE</spring.version>
 		<jdk.version>1.7</jdk.version>
+		<m2eclipse.wtp.contextRoot>/InSoNet</m2eclipse.wtp.contextRoot>
 	</properties>
 
 	<build>
 		<plugins>
 			<plugin>
 				<artifactId>maven-war-plugin</artifactId>
-				<version>2.0.1</version>
+				<version>2.3</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -175,6 +175,21 @@
 		    <artifactId>spring-test</artifactId>
 		    <version>${spring.version}</version>
 		</dependency>
+		<dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+            <version>3.2.3.RELEASE</version>
+        </dependency>
+		<dependency>
+	        <groupId>org.springframework.security</groupId>
+	        <artifactId>spring-security-web</artifactId>
+	        <version>3.2.3.RELEASE</version>
+	    </dependency>
+	    <dependency>
+	        <groupId>org.springframework.security</groupId>
+	        <artifactId>spring-security-config</artifactId>
+	        <version>3.2.3.RELEASE</version>
+	    </dependency>
 
 		<!-- Servlet API and JSTL -->
 		<dependency>
@@ -280,4 +295,5 @@
            <url>https://repository.jboss.org/nexus/content/repositories/releases</url>
        </repository>	   
 	</repositories>
+	
 </project>
