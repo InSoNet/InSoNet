@@ -42,7 +42,7 @@ public class InsonetUserDAOImpl implements InsonetUserDAO {
 
 	@SuppressWarnings("unchecked")
 	public List<InsonetUser> getInsonetUsers() {
-		return getCurrentSession().createQuery("from insonetuser").list();
+		return getCurrentSession().createQuery("from insonetUser").list();
 	}
 
 }
