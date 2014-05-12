@@ -26,16 +26,27 @@ public class HomeController {
     }
     
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    protected void login(@AuthenticationPrincipal User user) throws ServletException{
+    protected ModelAndView loginHandler() throws ServletException{
     	
     	ModelAndView mav = new ModelAndView();
     	mav.setViewName("login");
-    	mav.addObject("message", "Bienvenido username");
+    	mav.addObject("message", "Ingrese usuario y contraseña");
     	    	
+    	return mav;
+    }
+    
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    protected String login(@RequestParam("username") String username, @RequestParam("password") String password) throws ServletException{
+    	
+    	//ModelAndView mav = new ModelAndView();
+    	//mav.setViewName("login");
+    	//mav.addObject("message", "Bienvenido username");
+    	
+    	return "redirect:/login?error";
     }
     
     //Spring Security see this :
-  	@RequestMapping(value = "/login", method = RequestMethod.GET)
+  	/*@RequestMapping(value = "/login", method = RequestMethod.GET)
   	public ModelAndView login(
   		@RequestParam(value = "error", required = false) String error,
   		@RequestParam(value = "logout", required = false) String logout) {
@@ -52,6 +63,6 @@ public class HomeController {
    
   		return model;
    
-  	}
+  	}*/
 
 }

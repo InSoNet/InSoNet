@@ -9,9 +9,6 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
-//import org.hibernate.validator.NotNull;
-//import org.hibernate.validator.Pattern;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;

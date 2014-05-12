@@ -18,7 +18,9 @@
     <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"/>
     <!-- Enable more MVC Annotation at method level -->
     <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"/>
-    
+
+<!-- Creates the JSR-303 Validator -->
+<!-- bean id="mvcValidator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" /-->
     <context:component-scan base-package="ar.com.insonet" />
     <mvc:resources mapping="/resources/**" location="/resources/"></mvc:resources>
     <mvc:annotation-driven>
@@ -26,6 +28,7 @@
             <bean class="org.springframework.security.web.bind.support.AuthenticationPrincipalArgumentResolver"/>
         </mvc:argument-resolvers>
     </mvc:annotation-driven>
+    
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
         <property name="prefix" value="/WEB-INF/jsp/" />

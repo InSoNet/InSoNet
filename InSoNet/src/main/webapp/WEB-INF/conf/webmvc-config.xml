@@ -21,7 +21,7 @@
     <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"/>
     
     <mvc:resources mapping="/resources/**" location="/resources/"></mvc:resources>
-    <mvc:annotation-driven></mvc:annotation-driven>
+    
     <!-- Scans for application @Components to deploy -->
     <context:component-scan base-package="ar.com.insonet.controller.home" />
 

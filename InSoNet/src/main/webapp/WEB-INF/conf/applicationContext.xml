@@ -15,7 +15,5 @@
     
     <!-- Spring MVC configuration -->
     <import resource="webmvc-config.xml" />
-    
-    
-    
+          
 </beans>

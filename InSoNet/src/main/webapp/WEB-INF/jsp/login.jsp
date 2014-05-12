@@ -42,13 +42,17 @@
         
         </div>
         <div class="col-lg-4">
-            <c:if test="${not empty error}">
-	            <div class="error">${error}</div>
-	        </c:if>
-	        <c:if test="${not empty msg}">
-	            <div class="msg">${msg}</div>
-	        </c:if>
-            <form  role="form" action="/InSoNet/login?error" method='POST'>
+            <c:if test="${param.error != null}">        
+		        <p>
+		            Invalid username and password.
+		        </p>
+		    </c:if>
+		    <c:if test="${param.logout != null}">       
+		        <p>
+		            You have been logged out.
+		        </p>
+		    </c:if>
+            <form  role="form" action="/InSoNet/login" method='POST'>
                 <div class="form-group">
                     <label for="username">E-mail</label>
                     <input type="email" class="form-control" id="username" name="username" placeholder="Ingrese E-mail">
