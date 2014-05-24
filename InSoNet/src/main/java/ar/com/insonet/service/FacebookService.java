@@ -10,16 +10,17 @@ import facebook4j.FacebookFactory;
 
 public class FacebookService {
 
-	public void signin(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public String signin(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		Facebook facebook = new FacebookFactory().getInstance();
 		request.getSession().setAttribute("facebook", facebook);
 		StringBuffer callbackURL = request.getRequestURL();
 		int index = callbackURL.lastIndexOf("/");
 		callbackURL.replace(index, callbackURL.length(), "").append("/callback");
-		response.sendRedirect(facebook.getOAuthAuthorizationURL(callbackURL.toString()));
+		//response.sendRedirect(facebook.getOAuthAuthorizationURL(callbackURL.toString()));
+		return facebook.getOAuthAuthorizationURL(callbackURL.toString());
 	}
 	
-	public void callback(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public String callback(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		Facebook facebook = (Facebook) request.getSession().getAttribute("facebook");
 		String oauthCode = request.getParameter("code");
 		try {
@@ -27,6 +28,28 @@ public class FacebookService {
 		} catch (FacebookException e) {
 			throw new ServletException(e);
 		}
-		response.sendRedirect(request.getContextPath() + "/");
+		//response.sendRedirect(request.getContextPath() + "/");
+		
+		return request.getContextPath() + "/";
+	}
+	
+	public String logout(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		Facebook facebook = (Facebook) request.getSession().getAttribute("facebook");
+		String accessToken = "";
+		
+		try {
+			accessToken = facebook.getOAuthAccessToken().getToken();
+		} catch (Exception e) {
+			throw new ServletException(e);
+		}
+		request.getSession().invalidate();
+
+		// Log Out of the Facebook
+		StringBuffer next = request.getRequestURL();
+		int index = next.lastIndexOf("/");
+		next.replace(index + 1, next.length(), "");
+		//response.sendRedirect("http://www.facebook.com/logout.php?next="	+ next.toString() + "&access_token=" + accessToken);
+	
+		return "http://www.facebook.com/logout.php?next="	+ next.toString() + "&access_token=" + accessToken;
 	}
 }
