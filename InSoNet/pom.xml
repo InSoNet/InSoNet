@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>InSoNet</groupId>
+	<groupId>insonet</groupId>
 	<artifactId>InSoNet</artifactId>
 	<packaging>war</packaging>
 	<version>0.2.0</version>
@@ -15,24 +15,6 @@
 		<spring.version>3.2.2.RELEASE</spring.version>
 		<jdk.version>1.7</jdk.version>
 	</properties>
-
-	<build>
-		<plugins>
-			<plugin>
-				<artifactId>maven-war-plugin</artifactId>
-				<version>3.0</version><!-- Si hay problema ponerlo como antes 2.4 o 2.3 -->
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.0</version>
-				<configuration>
-					<source>${jdk.version}</source>
-					<target>${jdk.version}</target>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 
 	<dependencies>
 		<dependency>
@@ -103,11 +85,6 @@
 		</dependency>
 		
 		<dependency>
-            <groupId>org.slf4j</groupId>
-		    <artifactId>slf4j-api</artifactId>
-		    <version>1.7.5</version>
-		</dependency>
-		<dependency>
 		    <groupId>dom4j</groupId>
 		    <artifactId>dom4j</artifactId>
 		    <version>1.6.1</version>
@@ -117,11 +94,11 @@
             <artifactId>log4j</artifactId>
             <version>1.2.17</version>
         </dependency>
-		<!-- dependency>
+		<dependency>
 		    <groupId>org.slf4j</groupId>
 		    <artifactId>slf4j-log4j12</artifactId>
 		    <version>1.7.5</version>
-		</dependency-->
+		</dependency>
 		<dependency>
 		    <groupId>javassist</groupId>
 		    <artifactId>javassist</artifactId>
@@ -170,21 +147,21 @@
 		    <version>${spring.version}</version>
 		</dependency>
 
-        <dependency>
+        <!--dependency>
 	        <groupId>org.springframework.security</groupId>
 	        <artifactId>spring-security-core</artifactId>
-	        <version>3.2.3.RELEASE</version>
+	        <version>3.2.2.RELEASE</version>
 	    </dependency>
 	    <dependency>
 	        <groupId>org.springframework.security</groupId>
 	        <artifactId>spring-security-web</artifactId>
-	        <version>3.2.3.RELEASE</version>
+	        <version>3.2.2.RELEASE</version>
 	    </dependency>
 	    <dependency>
 	        <groupId>org.springframework.security</groupId>
 	        <artifactId>spring-security-config</artifactId>
-	        <version>3.2.3.RELEASE</version>
-	    </dependency>
+	        <version>3.2.2.RELEASE</version>
+	    </dependency-->
         
 		<!-- Servlet API and JSTL -->
 		<dependency>
@@ -290,4 +267,22 @@
            <url>https://repository.jboss.org/nexus/content/repositories/releases</url>
        </repository>	   
 	</repositories>
+	<build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.4</version><!-- Si hay problema ponerlo como antes 2.4 o 2.3 -->
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.0</version>
+                <configuration>
+                    <source>${jdk.version}</source>
+                    <target>${jdk.version}</target>
+                </configuration>
+            </plugin>
+        </plugins>
+        <finalName>InSoNet</finalName>
+    </build>
 </project>
