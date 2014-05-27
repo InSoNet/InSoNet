@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ taglib prefix="tag" tagdir="../WEB-INF/tags/facebook"%>
+<%@ taglib prefix="tag" tagdir="/WEB-INF/tags/facebook"%>
 
 <html>
 <head>
@@ -11,9 +11,9 @@
 		<a href="signin">Sign in with Facebook</a>
 	</tag:notloggedin>
 	<tag:loggedin>
-		<a href="./logout">logout</a>
+		<a href="logout">logout</a>
 		<h1>Welcome ${facebook.name} (${facebook.id})</h1>
-		<form action="./post" method="post">
+		<form action="posts" method="post">
 			<textarea cols="80" rows="2" name="message"></textarea>
 			<input type="submit" name="post" value="statuses" />
 		</form>

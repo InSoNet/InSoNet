@@ -9,8 +9,7 @@
 </head>
 <body>
 	<%
-		ResponseList<Friend> lista = (ResponseList<Friend>) request
-				.getAttribute("friends");
+		facebook4j.ResponseList<Friend> lista = (facebook4j.ResponseList<Friend>)request.getAttribute("friends");
 
 		for (Friend ff : lista) {
 	%>

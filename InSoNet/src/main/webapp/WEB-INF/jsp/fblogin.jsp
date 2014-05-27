@@ -13,11 +13,11 @@
     </tag:notloggedin>
     <tag:loggedin>
         <h1>Welcome ${facebook.name} (${facebook.id})</h1>
-        <form action="./post" method="post">
+        <form action="./facebook/posts" method="post">
             <textarea cols="80" rows="2" name="message"></textarea>
             <input type="submit" name="post" value="statuses" />
         </form>
-        <a href="./logout">logout</a>
+        <a href="./facebook/logout">logout</a>
     </tag:loggedin>
 </body>
 </html>
