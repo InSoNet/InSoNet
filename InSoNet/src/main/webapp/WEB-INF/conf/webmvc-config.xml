@@ -22,7 +22,7 @@
     <mvc:resources mapping="/resources/**" location="/resources/"></mvc:resources>
     <mvc:annotation-driven></mvc:annotation-driven>
     <!-- Scans for application @Components to deploy -->
-    <context:component-scan base-package="ar.com.insonet.controller.home" />
+    <context:component-scan base-package="ar.com.insonet" />
 
     <!-- Mapping a view name to a JSP page -->
     <!-- E.g. the view "home" will map to /WEB-INF/jsp/home.jsp -->

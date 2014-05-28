@@ -12,7 +12,10 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
+import javax.validation.Validator;
 import javax.validation.constraints.NotNull;
+
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Entity
 @Table(name="user")
@@ -23,6 +26,9 @@ public abstract class User implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	@Autowired
+	private Validator validator;
+	
 	@Id
 	@GeneratedValue
 	private Integer id;
