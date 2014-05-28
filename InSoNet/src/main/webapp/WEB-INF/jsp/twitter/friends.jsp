@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
+<%@ page import="facebook4j.*"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -7,11 +8,13 @@
 <title>Insert title here</title>
 </head>
 <body>
-	<p>
-		<a href="facebook/">Facebook</a>
-	</p>
-	<p>
-		<a href="twitter/">Twitter</a>
-	</p>
+	<%
+		ResponseList<Friend> lista = (ResponseList<Friend>) request
+				.getAttribute("friends");
+
+		for (Friend ff : lista) {
+	%>
+		<p><%=ff.getName()%></p>
+	<% } %>
 </body>
 </html>
