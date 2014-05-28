@@ -5,12 +5,18 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.Validator;
 import javax.validation.constraints.NotNull;
 //import org.hibernate.validator.NotNull;
+
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Entity
 @Table(name="configuration")
 public class Configuration {
+	
+	@Autowired
+	private Validator validator;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE)

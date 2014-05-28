@@ -8,14 +8,19 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
+import javax.validation.Validator;
 import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
 //import org.hibernate.validator.Future;
 //import org.hibernate.validator.NotNull;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 @Entity
 @Table(name = "accesstoken")
 public class AccessToken implements Serializable {
+	@Autowired
+	private Validator validator;
 	
 	private static final long serialVersionUID = 1L;
 	@Id

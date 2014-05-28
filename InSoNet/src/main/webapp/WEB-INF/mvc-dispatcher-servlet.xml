@@ -19,9 +19,7 @@
     <!-- Enable more MVC Annotation at method level -->
     <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"/>
 
-<!-- Creates the JSR-303 Validator -->
-<!-- bean id="mvcValidator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" /-->
-    <context:component-scan base-package="ar.com.insonet" />
+    <context:component-scan base-package="ar.com.insonet.controller.home" />
     <mvc:resources mapping="/resources/**" location="/resources/"></mvc:resources>
     <mvc:annotation-driven>
         <mvc:argument-resolvers>

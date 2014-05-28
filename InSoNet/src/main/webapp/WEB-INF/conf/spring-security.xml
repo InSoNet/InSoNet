@@ -5,9 +5,9 @@
     http://www.springframework.org/schema/security
     http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 
-	<!-- http auto-config="true">
+	<http auto-config="true">
 		<intercept-url pattern="/**" access="ROLE_USER" />
-	</http-->
+	</http>
 	<!-- beans:bean id="authenticationEntryPoint"
 		class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
 		<beans:property name="loginFormUrl" value="/login.jsp" />
@@ -16,7 +16,11 @@
 		<intercept-url access="ROLE_ADMIN" pattern="/admin/*"/> <form-login authentication-failure-url="/error-login.html" 
 		default-target-url="/success-login.html" login-page="/user-login.html"/> 
 		<logout logout-success-url="/index.html"/> </http> -->
-	<!--authentication-manager> <authentication-provider> <user-service> <user 
-		name="user@insonet.com" password="password" authorities="ROLE_USER" /> </user-service> 
-		</authentication-provider> </authentication-manager-->
+	<authentication-manager>
+	    <authentication-provider>
+	       <user-service>
+	           <user name="user@insonet.com" password="password" authorities="ROLE_USER" />
+	       </user-service> 
+		</authentication-provider>
+    </authentication-manager>
 </beans:beans>
