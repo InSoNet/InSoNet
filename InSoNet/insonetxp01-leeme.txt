@@ -1,0 +1,9 @@
+Ejecutar c:\Projects\Java\insonetxp01
+
+mvn tomcat7:run
+
+porque tiene el plugin incluido en pom.xml 
+
+despues con el navegador acceder a 
+
+localhost:9090

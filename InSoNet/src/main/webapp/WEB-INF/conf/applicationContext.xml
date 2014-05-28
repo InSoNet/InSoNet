@@ -14,8 +14,6 @@
     <context:annotation-config />
     
     <!-- Spring MVC configuration -->
-    <import resource="webmvc-config.xml" />
-    
-    
+    <import resource="webmvc-config.xml" />    
     
 </beans>

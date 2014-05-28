@@ -25,7 +25,7 @@ public class HomeController {
         return mav;
     }
     
-    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    /*@RequestMapping(value = "/login", method = RequestMethod.GET)
     protected void login(@AuthenticationPrincipal User user) throws ServletException{
     	
     	ModelAndView mav = new ModelAndView();
@@ -52,6 +52,6 @@ public class HomeController {
    
   		return model;
    
-  	}
+  	}*/
 
 }
