@@ -12,10 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
-import javax.validation.Validator;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.beans.factory.annotation.Autowired;
 
 @Entity
 @Table(name="user")
@@ -26,27 +24,26 @@ public abstract class User implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@Autowired
-	private Validator validator;
-	
 	@Id
 	@GeneratedValue
 	private Integer id;
-	@Column(length = 10)
+	@Column(length = 20)
 	@NotNull
 	private String username;
 	@NotNull
 	private String password;
-	@NotNull
 	private String passwordRecovery;
-
+	@NotNull
+	private boolean enabled;
+	
 	public User() {
 	
 	}
 
-	public User(String username, String password) {
+	public User(String username, String password, Boolean enabled) {
 		this.username = username;
 		this.password = password;
+		this.enabled = enabled;
 	}
 	
 	public Integer getId() {
@@ -81,4 +78,11 @@ public abstract class User implements Serializable {
 		this.passwordRecovery = passwordRecovery;
 	}
 
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
 }

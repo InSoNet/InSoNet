@@ -12,7 +12,8 @@
         
     <!-- Activates annotation-based bean configuration -->
     <context:annotation-config />
-    
+    <!-- For Dependency injection with Autowired-->
+    <import resource="services.xml" />
     <!-- Spring MVC configuration -->
     <import resource="webmvc-config.xml" />
           

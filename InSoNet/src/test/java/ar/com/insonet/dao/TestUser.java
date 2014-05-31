@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.junit.Before;
 
 import ar.com.insonet.model.InsonetUser;
-import ar.com.insonet.model.Roles;
+import ar.com.insonet.model.Role;
 
 public class TestUser {
 	
@@ -16,24 +16,24 @@ public class TestUser {
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		
 		Transaction tx = session.beginTransaction();	
-		Roles setRoleUser = (Roles) session.get(Roles.class, new Integer(1));//1=user,2=moderator,3=admin
-		Roles setRoleMod = (Roles) session.get(Roles.class, new Integer(2));
-		Roles setRoleAdmin = (Roles) session.get(Roles.class, new Integer(3));
+		Role setRoleUser = (Role) session.get(Role.class, new Integer(1));//1=user,2=moderator,3=admin
+		Role setRoleMod = (Role) session.get(Role.class, new Integer(2));
+		Role setRoleAdmin = (Role) session.get(Role.class, new Integer(3));
 		
 		if (setRoleUser == null) {
-			setRoleUser = new Roles();
+			setRoleUser = new Role();
 			setRoleUser.setRole("user");
 			session.save(setRoleUser);
 		}
 		
 		if (setRoleMod == null ) {
-			setRoleMod = new Roles();
+			setRoleMod = new Role();
 			setRoleMod.setRole("moderator");
 			session.save(setRoleMod);
 		}
 		
 		if (setRoleAdmin == null) {
-			setRoleAdmin = new Roles();
+			setRoleAdmin = new Role();
 			setRoleAdmin.setRole("admin");
 			session.save(setRoleAdmin);
 		}
@@ -47,15 +47,16 @@ public class TestUser {
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		
 		Transaction tx = session.beginTransaction();		
-		String setUsername = "rodo";
-		String setPassword = "";
-		String setName = "rodolfo";
-		String setSurname = "inturias";
-		String setEmail = "inturias_r@yahoo.com.ar";
+		String setUsername = "demo";
+		String setPassword = "demo";
+		String setName = "user";
+		String setSurname = "developer";
+		String setEmail = "user@insonet.com";
 		Integer setCelular = 1558905890;
-		InsonetUser user = new InsonetUser(setUsername,setPassword,setName,setSurname,setEmail,setCelular);
-		Roles setRole = (Roles) session.get(Roles.class, new Integer(1));//1=user,2=moderator,3=admin
-		user.setRoles(setRole);
+		Boolean isEnabled = true;
+		InsonetUser user = new InsonetUser(setUsername,setPassword,setName,setSurname,setEmail,setCelular, isEnabled);
+		Role setRole = (Role) session.get(Role.class, new Integer(1));//1=user,2=moderator,3=admin
+		user.setRole(setRole);
 		session.save(user);
 		tx.commit();
 	}

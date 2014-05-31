@@ -5,17 +5,11 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.Validator;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 @Entity
-@Table(name="roles")
-public class Roles {
-
-	@Autowired
-	private Validator validator;
+@Table(name="role")
+public class Role {
 	
 	@Id
 	@GeneratedValue

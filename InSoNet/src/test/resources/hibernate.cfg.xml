@@ -34,6 +34,6 @@
  		<mapping class="ar.com.insonet.model.InsonetUser"/> 
  		<mapping class="ar.com.insonet.model.Configuration"/>
  		<mapping class="ar.com.insonet.model.SociableImpl"/>
- 		<mapping class="ar.com.insonet.model.Roles"/>
+ 		<mapping class="ar.com.insonet.model.Role"/>
 	</session-factory>
 </hibernate-configuration>

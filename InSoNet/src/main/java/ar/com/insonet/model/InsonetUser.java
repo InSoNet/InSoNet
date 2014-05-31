@@ -3,15 +3,12 @@ package ar.com.insonet.model;
 import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.validation.Validator;
+import javax.persistence.OneToOne;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -19,18 +16,15 @@ import java.util.ArrayList;
 import java.util.Set;
 
 @Entity
-@Table(name = "insonetUser")
 @DiscriminatorValue("2")
 public class InsonetUser extends User {
 
-	@Autowired
-	private Validator validator;
-	
 	private static final long serialVersionUID = 1L;
 	@NotNull
 	private String name;
 	@NotNull
 	private String surname;
+	@NotNull
 	@Pattern(regexp = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\."
 			+ "[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@"
 			+ "(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message = "{invalid.email}")
@@ -42,16 +36,21 @@ public class InsonetUser extends User {
 	private Collection<AbstractSociable> sociable = new ArrayList<AbstractSociable>();
 	@OneToMany(targetEntity = Configuration.class)
 	private List<Configuration> personalConfiguration = new ArrayList<Configuration>();
-	@ManyToMany
-	private Set<Roles> roles = new HashSet<Roles>();
+	
+	@OneToOne(cascade=CascadeType.ALL)
+	@JoinTable(name="user_role",
+		joinColumns = {@JoinColumn(name="user_id", referencedColumnName="id")},
+		inverseJoinColumns = {@JoinColumn(name="role_id", referencedColumnName="id")}
+	)
+	private Role role;
 
 	public InsonetUser() {
 		super();
 	}
 
 	public InsonetUser(String username, String password, String name,
-			String surname, String email, Integer celular) {
-		super(username, password);
+			String surname, String email, Integer celular, Boolean enabled) {
+		super(username, password, enabled);
 		this.name = name;
 		this.surname = surname;
 		this.email = email;
@@ -109,14 +108,12 @@ public class InsonetUser extends User {
 		this.personalConfiguration.add(configuration);
 	}
 
-	public Set<Roles> getRoles() {
-		return this.roles;
+	public Role getRole() {
+		return this.role;
 	}
 
-	//@OneToMany(cascade = CascadeType.ALL)
-	@ManyToMany
-	public void setRoles(Roles role) {
-		this.roles.add(role);
+	public void setRole(Role role) {
+		this.role = role;
 	}
 
 }

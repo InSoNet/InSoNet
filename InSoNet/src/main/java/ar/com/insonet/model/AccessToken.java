@@ -19,9 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Entity
 @Table(name = "accesstoken")
 public class AccessToken implements Serializable {
-	@Autowired
-	private Validator validator;
-	
+		
 	private static final long serialVersionUID = 1L;
 	@Id
 	@GeneratedValue

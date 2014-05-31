@@ -3,8 +3,8 @@ package ar.com.insonet.controller.facebook;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,17 +19,20 @@ import facebook4j.ResponseList;
 @Controller
 public class ProfileController {
 
-	private ApplicationContext ctx;
+	//private ApplicationContext ctx;
+	private FacebookServiceImpl fbService;
 	
-	private ProfileController() {
-		this.ctx = new ClassPathXmlApplicationContext("classpath:ar/com/insonet/services.xml");
+	@Autowired
+	private ProfileController(ApplicationContext applicationContext, FacebookServiceImpl facebookService) {
+		
+		//this.ctx = applicationContext;
+		this.fbService = facebookService;
 	}
 	
 	@RequestMapping(value="/facebook/posts", params="message", method=RequestMethod.POST)
 	public String postHandler(HttpServletRequest request,	HttpServletResponse response) throws Exception {
 		
-		FacebookServiceImpl fbService = ctx.getBean("facebookService", FacebookServiceImpl.class);
-        String urlTarget = fbService.post(request, response);
+		String urlTarget = fbService.post(request, response);
         
         return "redirect:" + urlTarget;
 	}
@@ -39,8 +42,7 @@ public class ProfileController {
 		
 		ResponseList<Post> postsList;
 		
-		FacebookServiceImpl fbService = ctx.getBean("facebookService", FacebookServiceImpl.class);
-        postsList = fbService.getPosts(request, response);
+		postsList = fbService.getPosts(request, response);
         
         model.addAttribute("posts", postsList);
         
@@ -51,8 +53,7 @@ public class ProfileController {
 	protected String friendsHandler(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
 		ResponseList<Friend> friendsList;
 		
-		FacebookServiceImpl fbService = ctx.getBean("facebookService", FacebookServiceImpl.class);
-        friendsList = fbService.getFriends(request, response);
+		friendsList = fbService.getFriends(request, response);
         
         model.addAttribute("friends", friendsList);
         
@@ -64,8 +65,7 @@ public class ProfileController {
 	protected String statusHandler(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
 		ResponseList<Post> postsList;
 		
-		FacebookServiceImpl fbService = ctx.getBean("facebookService", FacebookServiceImpl.class);
-        postsList = fbService.getStatus(request, response);
+		postsList = fbService.getStatus(request, response);
         
         model.addAttribute("status", postsList);
         

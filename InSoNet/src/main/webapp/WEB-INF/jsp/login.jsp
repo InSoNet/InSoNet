@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="es">
@@ -42,7 +41,7 @@
         
         </div>
         <div class="col-lg-4">
-            <c:if test="${param.error != null}">        
+            <c:if test="${!empty param.error}">        
 		        <p>
 		            Invalid username and password.
 		        </p>
@@ -52,14 +51,14 @@
 		            You have been logged out.
 		        </p>
 		    </c:if>
-            <form  role="form" action="/InSoNet/login" method='POST'>
+            <form  role="form" action="<c:url value='j_spring_security_check'/>" method='POST'>
                 <div class="form-group">
                     <label for="username">E-mail</label>
-                    <input type="email" class="form-control" id="username" name="username" placeholder="Ingrese E-mail">
+                    <input type="email" class="form-control" id="username" name="j_username" placeholder="Ingrese E-mail">
                 </div>
                 <div class="form-group">
                     <label for="password">Contraseña</label>
-                    <input type="password" class="form-control" id="password" name="password" placeholder="Ingrese contraseña">
+                    <input type="password" class="form-control" id="password" name="j_password" placeholder="Ingrese contraseña">
                 </div>
                 <div class="form-group">
                     

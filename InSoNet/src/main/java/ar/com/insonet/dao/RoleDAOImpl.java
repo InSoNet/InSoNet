@@ -8,10 +8,10 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 
-import ar.com.insonet.model.Roles;
+import ar.com.insonet.model.Role;
 
 @Repository
-public class RolesDAOImpl implements RolesDAO {
+public class RoleDAOImpl implements RoleDAO {
 
 	private SessionFactory sessionFactory;
 
@@ -20,13 +20,13 @@ public class RolesDAOImpl implements RolesDAO {
 	}
 	
 	@Override
-	public void addRole(Roles role) {
+	public void addRole(Role role) {
 		getCurrentSession().save(role);
 	}
 
 	@Override
-	public void updateRole(Roles role) {
-		Roles roleUpdate = getRoleById(role.getId());
+	public void updateRole(Role role) {
+		Role roleUpdate = getRoleById(role.getId());
 		roleUpdate.setRole(role.getRole());
 		getCurrentSession().update(roleUpdate);
 
@@ -34,22 +34,22 @@ public class RolesDAOImpl implements RolesDAO {
 
 	@Override
 	public void deleteRole(int id) {
-		Roles role = getRoleById(id);
+		Role role = getRoleById(id);
 		if (role != null)
 			getCurrentSession().delete(role);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Set<Roles> getRoles() {
-		List<Roles> list = getCurrentSession().createQuery("from roles").list();
-		Set<Roles> roles = new HashSet<Roles>(list);
+	public Set<Role> getAllRoles() {
+		List<Role> list = getCurrentSession().createQuery("from role").list();
+		Set<Role> roles = new HashSet<Role>(list);
 		return roles;
 	}
 
 	@Override
-	public Roles getRoleById(int id) {
-		Roles role = (Roles)getCurrentSession().get(Roles.class, id);
+	public Role getRoleById(int id) {
+		Role role = (Role)getCurrentSession().get(Role.class, id);
 		return role;
 	}
 
