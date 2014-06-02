@@ -3,8 +3,8 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans.xsd">
+ 
+    <bean id="userDAO" class="ar.com.insonet.dao.UserDAOImpl"></bean>
+    <bean id="roleDAO" class="ar.com.insonet.dao.RoleDAOImpl"></bean>
 
-    <bean id="facebookService" class="ar.com.insonet.service.FacebookServiceImpl"></bean>
-    <bean id="insonetUserDetailsService" class="ar.com.insonet.service.InsonetUserDetailsService"></bean>
-	
 </beans>

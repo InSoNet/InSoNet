@@ -20,7 +20,7 @@
     <!--[if IE 9]>
         <script type='text/javascript' src='<c:url value="/resources/js/jquery.html5-placeholder-shim.js"/>'></script>
     <![endif]-->
-    <title>Insert title here</title>
+    <title>Inicio de sesión</title>
 </head>
 <body>
 <div class="container">
@@ -41,24 +41,24 @@
         
         </div>
         <div class="col-lg-4">
-            <c:if test="${!empty param.error}">        
-		        <p>
-		            Invalid username and password.
+            <c:if test="${param.error != null}">        
+		        <p class=" alert alert-danger">
+		            <c:out value="${error}"/>
 		        </p>
 		    </c:if>
 		    <c:if test="${param.logout != null}">       
-		        <p>
-		            You have been logged out.
+		        <p class="alert alert-success">
+		            <c:out value="${msg}"/>
 		        </p>
 		    </c:if>
             <form  role="form" action="<c:url value='j_spring_security_check'/>" method='POST'>
                 <div class="form-group">
-                    <label for="username">E-mail</label>
-                    <input type="email" class="form-control" id="username" name="j_username" placeholder="Ingrese E-mail">
+                    <label for="j_username" lang="es">Usuario</label>
+                    <input type="text" class="form-control" id="j_username" name="j_username" placeholder="Ingrese nombre de usuario"/>
                 </div>
                 <div class="form-group">
-                    <label for="password">Contraseña</label>
-                    <input type="password" class="form-control" id="password" name="j_password" placeholder="Ingrese contraseña">
+                    <label for="j_password" lang="es">Contraseña</label>
+                    <input type="password" class="form-control" id="j_password" name="j_password" placeholder="Ingrese contraseña"/>
                 </div>
                 <div class="form-group">
                     
@@ -69,7 +69,7 @@
                         </div>
                     
                 </div>
-                <button type="submit" class="btn btn-default" title="Iniciar sesión">Enviar</button>
+                <button type="submit" class="btn btn-default" title="Iniciar sesión" lang="es">Enviar</button>
                 &nbsp;&nbsp;<a href="registroInSoNet.html" title="Crear cuenta en InSoNet">Registrarse</a>
                 
             </form>

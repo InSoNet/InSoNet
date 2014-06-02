@@ -21,7 +21,7 @@
     
     <mvc:resources mapping="/resources/**" location="/resources/"></mvc:resources>
     <mvc:annotation-driven></mvc:annotation-driven>
-    <mvc:view-controller path="/" view-name="home"/>
+    <mvc:view-controller path="/" view-name="index"/>
     <!-- Scans for application @Components to deploy -->
     <context:component-scan base-package="ar.com.insonet.controller" />
 

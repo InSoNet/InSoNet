@@ -14,6 +14,7 @@
     <context:annotation-config />
     <!-- For Dependency injection with Autowired-->
     <import resource="services.xml" />
+    <import resource="dao.xml" />
     <!-- Spring MVC configuration -->
     <import resource="webmvc-config.xml" />
           

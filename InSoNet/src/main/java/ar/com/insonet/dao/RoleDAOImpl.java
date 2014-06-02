@@ -49,7 +49,7 @@ public class RoleDAOImpl implements RoleDAO {
 
 	@Override
 	public Role getRoleById(int id) {
-		Role role = (Role)getCurrentSession().get(Role.class, id);
+		Role role = (Role)getCurrentSession().load(Role.class, id);
 		return role;
 	}
 

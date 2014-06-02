@@ -2,6 +2,7 @@ package ar.com.insonet.model;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -11,6 +12,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -27,14 +31,21 @@ public abstract class User implements Serializable {
 	@Id
 	@GeneratedValue
 	private Integer id;
-	@Column(length = 20)
 	@NotNull
+	@Column(length = 20, unique=true)
 	private String username;
 	@NotNull
 	private String password;
 	private String passwordRecovery;
 	@NotNull
 	private boolean enabled;
+	
+	@OneToOne(cascade=CascadeType.ALL)
+	@JoinTable(name="user_role",
+		joinColumns = {@JoinColumn(name="user_id", referencedColumnName="id")},
+		inverseJoinColumns = {@JoinColumn(name="role_id", referencedColumnName="id")}
+	)
+	private Role role;
 	
 	public User() {
 	
@@ -84,5 +95,13 @@ public abstract class User implements Serializable {
 
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
+	}
+	
+	public Role getRole() {
+		return this.role;
+	}
+
+	public void setRole(Role role) {
+		this.role = role;
 	}
 }
