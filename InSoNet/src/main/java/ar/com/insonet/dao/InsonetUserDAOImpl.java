@@ -11,10 +11,8 @@ import ar.com.insonet.model.InsonetUser;
 @Repository
 public class InsonetUserDAOImpl implements InsonetUserDAO {
 
-	private SessionFactory sessionFactory;
-
 	private Session getCurrentSession() {
-		return sessionFactory.getCurrentSession();
+		return HibernateUtil.getSessionFactory().getCurrentSession();
 	}
 
 	public void addInsonetUser(InsonetUser insonetUser) {

@@ -8,6 +8,9 @@ import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotEmpty;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.ArrayList;
@@ -18,10 +21,14 @@ public class InsonetUser extends User {
 
 	private static final long serialVersionUID = 1L;
 	@NotNull
+	@NotEmpty
 	private String name;
 	@NotNull
+	@NotEmpty
 	private String surname;
+	@Email
 	@NotNull
+	@NotEmpty
 	@Column(unique=true)
 	@Pattern(regexp = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\."
 			+ "[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@"

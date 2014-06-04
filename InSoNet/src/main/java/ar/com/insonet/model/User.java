@@ -18,6 +18,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 
 @Entity
 @Table(name="user")
@@ -31,10 +33,12 @@ public abstract class User implements Serializable {
 	@Id
 	@GeneratedValue
 	private Integer id;
+	@NotEmpty
 	@NotNull
 	@Column(length = 20, unique=true)
 	private String username;
 	@NotNull
+	@NotEmpty
 	private String password;
 	private String passwordRecovery;
 	@NotNull

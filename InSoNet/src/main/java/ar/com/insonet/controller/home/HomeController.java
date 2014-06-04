@@ -1,16 +1,47 @@
 package ar.com.insonet.controller.home;
 
 import javax.servlet.ServletException;
+import javax.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Validator;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import ar.com.insonet.dao.HibernateUtil;
+import ar.com.insonet.dao.InsonetUserDAO;
+import ar.com.insonet.dao.InsonetUserValidator;
+import ar.com.insonet.model.InsonetUser;
+import ar.com.insonet.model.Role;
+import ar.com.insonet.model.User;
+
 @Controller
 public class HomeController {
+	
+	@Autowired
+	private InsonetUserDAO insonetUserDAO;
+	@Autowired
+	private InsonetUser insonetUser;
+	
+	@Autowired
+    private Validator validator;
+    
+    public void setValidator(Validator validator) {
+        this.validator = validator;
+    }
+    
+	/*@InitBinder
+	protected void initBinder(WebDataBinder binder) {
+		binder.addValidators(new InsonetUserValidator());
+	}*/
 	
 	@RequestMapping(value={"/", "/index"}, method=RequestMethod.GET)
     public String defaultHandler(Model model) {
@@ -18,25 +49,68 @@ public class HomeController {
         return "/index";
     }
 	
-	/*@RequestMapping(value = "/login", method = RequestMethod.GET)
-    public ModelAndView loginHandler() throws ServletException {
+	@ModelAttribute("insonetUser")
+    private InsonetUser getInsonetUser() {
+        return insonetUser;
+    }
+	
+	@RequestMapping(value = "/signup", method = RequestMethod.GET)
+    public ModelAndView signupHandler() throws ServletException {
     	
     	ModelAndView mav = new ModelAndView();
-    	mav.setViewName("login");
-    	mav.addObject("message", "Inicio de sesión");
-    	    	
+    	mav.setViewName("signup");
+    	mav.addObject("message", "Cree una cuenta");
+    	    	    	
     	return mav;
-    }*/
+    }
+	
+	@RequestMapping(value = "/signup", method = RequestMethod.POST)
+    public String postbackHandler(@ModelAttribute("insonetUser") InsonetUser user, BindingResult result) throws ServletException {
+    	
+		validator.validate(user, result);
+		if (result.hasErrors()) {
+    		return "/signup";
+    	}    	    	
+		try {
+    		HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
+    		Role setRole = (Role) HibernateUtil.getSessionFactory().getCurrentSession().get(Role.class, new Integer(1));//1=user,2=moderator,3=admin
+    		user.setRole(setRole);
+    		insonetUserDAO.addInsonetUser(user);    		
+    		HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+    	} catch(Exception ex) {
+    		HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().rollback();
+    		throw new ServletException("No se cumple con las restricciones para los usuarios.", ex); 
+    	}
+    	    	
+    	return "redirect:/success";
+    	
+    }
     
-    /*@RequestMapping(value = "/login", method = RequestMethod.POST)
-    protected String login() throws ServletException{
+	@RequestMapping(value = "/success", method = RequestMethod.GET)
+    protected String successHandler(Model model) {
+    
+		return "/success";
+	}
+    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    protected String createHandler(@Valid InsonetUser user, BindingResult result) throws ServletException {
     	
-    	//ModelAndView mav = new ModelAndView();
-    	//mav.setViewName("login");
-    	//mav.addObject("message", "Bienvenido username");
+    	if (result.hasErrors()) {
+    		return "/signup";
+    	}
     	
-    	return "/login?error";
-    }*/
+    	try {
+    		HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
+    		Role setRole = (Role) HibernateUtil.getSessionFactory().getCurrentSession().get(Role.class, new Integer(1));//1=user,2=moderator,3=admin
+    		user.setRole(setRole);
+    		insonetUserDAO.addInsonetUser(user);    		
+    		HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+    	} catch(Exception ex) {
+    		HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().rollback();
+    		throw new ServletException(ex); 
+    	}
+    	    	
+    	return "/create";
+    }
     
     //Spring Security see this :
   	@RequestMapping(value = "/login", method = RequestMethod.GET)

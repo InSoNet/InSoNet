@@ -6,6 +6,8 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Repository;
 
+import com.mysql.jdbc.exceptions.MySQLIntegrityConstraintViolationException;
+
 import ar.com.insonet.model.User;
 
 @Repository
@@ -16,7 +18,9 @@ public class UserDAOImpl implements UserDAO {
 	}
 
 	public void addUser(User user) {
+		
 		getCurrentSession().save(user);
+		
 	}
 
 	public void updateUser(User user) {

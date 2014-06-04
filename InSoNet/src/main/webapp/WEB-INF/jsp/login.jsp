@@ -42,7 +42,7 @@
         </div>
         <div class="col-lg-4">
             <c:if test="${param.error != null}">        
-		        <p class=" alert alert-danger">
+		        <p class="alert alert-danger">
 		            <c:out value="${error}"/>
 		        </p>
 		    </c:if>
@@ -70,7 +70,7 @@
                     
                 </div>
                 <button type="submit" class="btn btn-default" title="Iniciar sesión" lang="es">Enviar</button>
-                &nbsp;&nbsp;<a href="registroInSoNet.html" title="Crear cuenta en InSoNet">Registrarse</a>
+                &nbsp;&nbsp;<a href="./signup" title="Crear cuenta en InSoNet">Registrarse</a>
                 
             </form>
                    

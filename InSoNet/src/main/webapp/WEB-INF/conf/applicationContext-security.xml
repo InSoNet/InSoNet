@@ -12,6 +12,9 @@
     <http auto-config="true">
         <intercept-url pattern="/resources/**" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
         <intercept-url pattern="/login**" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
+        <intercept-url pattern="/signup**" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
+        <intercept-url pattern="/create" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
+        <intercept-url pattern="/success" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
         <intercept-url pattern="/admin/*" access="ROLE_ADMIN" />
         <intercept-url pattern="/**" access="ROLE_USER" />
         <form-login login-page="/login" default-target-url="/index" authentication-failure-url="/login?error" />
