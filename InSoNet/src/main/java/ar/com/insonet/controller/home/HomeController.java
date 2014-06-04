@@ -4,6 +4,8 @@ import javax.servlet.ServletException;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.mail.MailException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -22,15 +24,19 @@ import ar.com.insonet.dao.InsonetUserValidator;
 import ar.com.insonet.model.InsonetUser;
 import ar.com.insonet.model.Role;
 import ar.com.insonet.model.User;
+import ar.com.insonet.service.SendMailService;
 
 @Controller
 public class HomeController {
 	
+	//@Autowired
+	//private ApplicationContext applicationContext;
 	@Autowired
 	private InsonetUserDAO insonetUserDAO;
 	@Autowired
 	private InsonetUser insonetUser;
-	
+	@Autowired
+	private SendMailService sendMailService;
 	@Autowired
     private Validator validator;
     
@@ -77,9 +83,13 @@ public class HomeController {
     		user.setRole(setRole);
     		insonetUserDAO.addInsonetUser(user);    		
     		HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+    		//SendMailService mm = (SendMailService) applicationContext.getBean("sendMail");
+            sendMailService.sendMailConfirm(user.getEmail());
+    	//} catch(MailException mailex) {
+    		//throw new ServletException(mailex);
     	} catch(Exception ex) {
     		HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().rollback();
-    		throw new ServletException("No se cumple con las restricciones para los usuarios.", ex); 
+    		throw new ServletException(ex); 
     	}
     	    	
     	return "redirect:/success";
