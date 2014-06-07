@@ -47,18 +47,13 @@ public class UserDAOImpl implements UserDAO {
 	}
 
 	public User getUserByUsername(String username) {
-		//User user = null;
-		//List<User> userList = new ArrayList<User>();
-		
+			
 		Transaction tx =  getCurrentSession().beginTransaction();
         
 		User user = (User) getCurrentSession().createQuery("from User u where u.username = :username").setParameter("username", username).uniqueResult();
         
 		tx.commit();
 		
-        //if (userList.size() > 0)
-        //    user = userList.get(0);
-        
         return user;
 	}
 	

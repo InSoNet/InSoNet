@@ -1,11 +1,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib prefix="tag" tagdir="/WEB-INF/tags/facebook"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-
-<html>
+<!doctype html>
+<html lang="es">
 <head>
-<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
-<title>Sign in with Facebook example</title>
+<meta charset="utf-8"/>
+<title></title>
 </head>
 <body>
     

@@ -1,11 +1,16 @@
 package ar.com.insonet.controller.home;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.mail.MailException;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,6 +26,7 @@ import org.springframework.web.servlet.ModelAndView;
 import ar.com.insonet.dao.HibernateUtil;
 import ar.com.insonet.dao.InsonetUserDAO;
 import ar.com.insonet.dao.InsonetUserValidator;
+import ar.com.insonet.dao.UserDAO;
 import ar.com.insonet.model.InsonetUser;
 import ar.com.insonet.model.Role;
 import ar.com.insonet.model.User;
@@ -39,9 +45,16 @@ public class HomeController {
 	private SendMailService sendMailService;
 	@Autowired
     private Validator validator;
+    @Autowired
+    UserDAO userDAO;
     
     public void setValidator(Validator validator) {
         this.validator = validator;
+    }
+    
+    @ModelAttribute("insonetUser")
+    private InsonetUser getInsonetUser() {
+        return insonetUser;
     }
     
 	/*@InitBinder
@@ -51,13 +64,19 @@ public class HomeController {
 	
 	@RequestMapping(value={"/", "/index"}, method=RequestMethod.GET)
     public String defaultHandler(Model model) {
-
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		User domainUser;
+		UserDetails userDetails = null;
+		if (auth.getPrincipal() instanceof UserDetails) {
+			//user = ((UserDetails)auth.getPrincipal()).getUsername();
+			userDetails = (UserDetails)auth.getPrincipal();
+			domainUser = userDAO.getUserByUsername(userDetails.getUsername());
+        } else {
+            return "/index";
+        }
+		model.addAttribute("user", userDetails);
+		model.addAttribute("domainUser", domainUser);
         return "/index";
-    }
-	
-	@ModelAttribute("insonetUser")
-    private InsonetUser getInsonetUser() {
-        return insonetUser;
     }
 	
 	@RequestMapping(value = "/signup", method = RequestMethod.GET)
@@ -71,7 +90,7 @@ public class HomeController {
     }
 	
 	@RequestMapping(value = "/signup", method = RequestMethod.POST)
-    public String postbackHandler(@ModelAttribute("insonetUser") InsonetUser user, BindingResult result) throws ServletException {
+    public String postbackHandler(@ModelAttribute("insonetUser") InsonetUser user, BindingResult result, HttpServletRequest httpServletRequest) throws ServletException {
     	
 		validator.validate(user, result);
 		if (result.hasErrors()) {
@@ -83,25 +102,27 @@ public class HomeController {
     		user.setRole(setRole);
     		insonetUserDAO.addInsonetUser(user);    		
     		HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
-    		//SendMailService mm = (SendMailService) applicationContext.getBean("sendMail");
-            sendMailService.sendMailConfirm(user.getEmail());
-    	//} catch(MailException mailex) {
-    		//throw new ServletException(mailex);
+    		httpServletRequest.login(user.getUsername(), user.getPassword());
+    		sendMailService.sendMailConfirm(user.getEmail());            
+    	} catch(MailException mailex) {
+    		throw new ServletException(mailex);
     	} catch(Exception ex) {
     		HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().rollback();
     		throw new ServletException(ex); 
     	}
-    	    	
+    	
     	return "redirect:/success";
     	
     }
     
+	@PreAuthorize("hasRole('ROLE_USER')")
+	//@PreAuthorize("#c.name == authentication.name")
 	@RequestMapping(value = "/success", method = RequestMethod.GET)
     protected String successHandler(Model model) {
-    
+		//TODO: que se cargue la seccion de perfil, cabecera, pie de pagina y mensaje de registro exitoso.
 		return "/success";
 	}
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    /*@RequestMapping(value = "/create", method = RequestMethod.POST)
     protected String createHandler(@Valid InsonetUser user, BindingResult result) throws ServletException {
     	
     	if (result.hasErrors()) {
@@ -120,10 +141,9 @@ public class HomeController {
     	}
     	    	
     	return "/create";
-    }
+    }*/
     
-    //Spring Security see this :
-  	@RequestMapping(value = "/login", method = RequestMethod.GET)
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
   	public ModelAndView loginHandler(
   		@RequestParam(value = "error", required = false) String error,
   		@RequestParam(value = "logout", required = false) String logout) {

@@ -21,8 +21,13 @@ public class InsonetUserDAOImpl implements InsonetUserDAO {
 
 	public void updateInsonetUser(InsonetUser insonetUser) {
 		InsonetUser insonetUserToUpdate = getInsonetUser(insonetUser.getId());
-		insonetUserToUpdate.setUsername(insonetUser.getUsername());
+		//insonetUserToUpdate.setUsername(insonetUser.getUsername());
 		insonetUserToUpdate.setPassword(insonetUser.getPassword());
+		insonetUserToUpdate.setEmail(insonetUser.getEmail());
+		insonetUserToUpdate.setName(insonetUser.getName());
+		insonetUserToUpdate.setRole(insonetUser.getRole());
+		insonetUserToUpdate.setSurname(insonetUser.getSurname());
+		insonetUserToUpdate.setEnabled(insonetUser.isEnabled());
 		getCurrentSession().update(insonetUserToUpdate);
 	}
 

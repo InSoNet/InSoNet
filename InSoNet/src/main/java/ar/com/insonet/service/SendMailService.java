@@ -16,20 +16,33 @@ public class SendMailService
  
 	public void sendMailConfirm(String to) {
 		SimpleMailMessage message = new SimpleMailMessage();
-		
-		String msg = "<html><body>Gracias por registrarse como nuevo usuario Insonet. <br/>" +
-				"Para Confirmar su registro acceda al siguiente enlace. <a href='http://localhost:8080/InSoNet/confirm'>Confirmar</a></body></html>";
+		String msg = "Gracias por registrarse como nuevo usuario Insonet." +
+				"Para Confirmar su registro acceda al siguiente enlace. http://localhost:8080/InSoNet/confirm";
 		message.setFrom("insonetproject@gmail.com");
 		message.setTo(to);
 		message.setSubject("Confirmación de registro como usuario Insonet");
 		message.setText(msg);
+		mailSender.send(message);
+		
+	}
+	
+	public void sendMail(String to) {
+		SimpleMailMessage message = new SimpleMailMessage();
+		String msg = "Se han modificado sus datos de perfil de su cuenta insonet." +
+				"Si usted no lo hizo comuniquese con el administrador del sitio.";
+		message.setFrom("insonetproject@gmail.com");
+		message.setTo(to);
+		message.setSubject("Actualización de datos de perfil");
+		message.setText(msg);
 		try {
 			mailSender.send(message);
 		} catch (MailException ex) {
+			//TODO Log
 			System.err.println(ex.getMessage());
 		}
 
 	}
+	
 	public void sendMail(String from, String to, String subject, String msg) {
  
 		SimpleMailMessage message = new SimpleMailMessage();
