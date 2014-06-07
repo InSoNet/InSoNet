@@ -144,7 +144,7 @@ public class HomeController {
     }*/
     
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-  	public ModelAndView loginHandler(
+  	public ModelAndView loginAction(
   		@RequestParam(value = "error", required = false) String error,
   		@RequestParam(value = "logout", required = false) String logout) {
    
@@ -162,5 +162,26 @@ public class HomeController {
   		return model;
    
   	}
+    
+    @RequestMapping(value = "/confirm", method = RequestMethod.GET)
+    public String confirmAction() {
+		User domainUser;
+		UserDetails userDetails = null;
+		
+    	Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		
+		if (auth.getPrincipal() instanceof UserDetails) {
+			userDetails = (UserDetails)auth.getPrincipal();
+			domainUser = userDAO.getUserByUsername(userDetails.getUsername());
+			domainUser.setEnabled(true);
+			HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
+			userDAO.updateUser(domainUser);
+			HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+        } else {
+            return "redirect:/login";
+        }
+		
+		return "redirect:/index";
+    }
 
 }

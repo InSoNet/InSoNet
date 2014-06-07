@@ -14,7 +14,7 @@ public class HomeControllerTests extends TestCase {
         HomeController controller = new HomeController();
         String param2 = null;
 		String param = null;
-		ModelAndView modelAndView = controller.loginHandler(param, param2);
+		ModelAndView modelAndView = controller.loginAction(param, param2);
         assertEquals("login", modelAndView.getViewName());
         assertNotNull(modelAndView.getModel());
         //Map modelMap = (Map)modelAndView.getModel().get("message");
