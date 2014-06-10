@@ -1,8 +1,24 @@
 package ar.com.insonet.service;
 
+import java.util.List;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import ar.com.insonet.dao.HibernateUtil;
+import ar.com.insonet.dao.InsonetUserDAO;
+import ar.com.insonet.dao.SocialNetworkDAO;
+import ar.com.insonet.dao.SocialNetworkTypeDAO;
+import ar.com.insonet.model.AccessToken;
+import ar.com.insonet.model.InsonetUser;
+import ar.com.insonet.model.SocialNetwork;
+import ar.com.insonet.model.SocialNetworkType;
 
 import facebook4j.Facebook;
 import facebook4j.FacebookException;
@@ -12,27 +28,82 @@ import facebook4j.Post;
 import facebook4j.ResponseList;
 
 public class FacebookServiceImpl {
-
+	
+	@Autowired
+	AccessToken accessToken;
+	@Autowired
+	SocialNetwork socialNetwork;
+	@Autowired
+	SocialNetworkDAO socialNetworkDAO;
+	@Autowired 
+	SocialNetworkTypeDAO socialNetworkTypeDAO;
+	@Autowired
+	InsonetUserDAO insonetUserDAO;
+	
+	Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+	
+	/*private enum LoginStatus {
+	    CONNECTED, NOT_AUTHORIZED, UNKNOWN
+	}*/
+	
 	public String signin(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		Facebook facebook = new FacebookFactory().getInstance();
 		request.getSession().setAttribute("facebook", facebook);
 		StringBuffer callbackURL = request.getRequestURL();
 		int index = callbackURL.lastIndexOf("/");
 		callbackURL.replace(index, callbackURL.length(), "").append("/callback");
-		//response.sendRedirect(facebook.getOAuthAuthorizationURL(callbackURL.toString()));
+		
 		return facebook.getOAuthAuthorizationURL(callbackURL.toString());
 	}
 	
 	public String callback(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		
+		facebook4j.auth.AccessToken fbToken = null; 
 		Facebook facebook = (Facebook) request.getSession().getAttribute("facebook");
 		String oauthCode = request.getParameter("code");
 		try {
-			facebook.getOAuthAccessToken(oauthCode);
+			fbToken = facebook.getOAuthAccessToken(oauthCode);
+			String username = facebook.getMe().getUsername();
+			accessToken.setExpire(fbToken.getExpires());
+			accessToken.setAccessToken(fbToken.getToken());
+			//if (facebook.getAuthorization().isEnabled()) {
+			//	accessToken.setLoginStatus(LoginStatus.CONNECTED.toString());
+			//} else {
+				accessToken.setLoginStatus("connected");
+	        //}
+			socialNetwork.setAccessToken(accessToken);
+			
+			//SocialNetworkType socialNetworkType = (SocialNetworkType) session.get(SocialNetworkType.class, new Integer(1));
+			//1=facebook,2=twitter
+			SocialNetworkType socialNetworkType = socialNetworkTypeDAO.getSocialNetworkType(1);
+			socialNetwork.setSocialNetworkType(socialNetworkType);
+			socialNetwork.setUsernameSocial(username);		
+			//Habilitar uno de los dos para guardar socialNetwork 
+			//session.save(socialNetwork);
+			//socialNetworkDAO.addSocialNetwork(socialNetwork);
+			UserDetails userDetails = (UserDetails)request.getSession().getAttribute("principal");
+			String loginUser = userDetails.getUsername();
+			InsonetUser insonetUser = insonetUserDAO.getInsonetUserByUsername(loginUser);
+			List<SocialNetwork> list =  insonetUser.getSocialNetwork();
+			list.add(socialNetwork);
+			insonetUser.setSocialNetwork(list);
+			Transaction tx = session.beginTransaction();
+			insonetUserDAO.updateInsonetUser(insonetUser);
+			
+			tx.commit();
+			
+			request.getSession().setAttribute("accessToken", accessToken);
+			
 		} catch (FacebookException e) {
 			throw new ServletException(e);
 		}
-		//response.sendRedirect(request.getContextPath() + "/");
 		
+		//TODO: to convert short-lived token to long-lived token
+		//TODO: to store access token and login status
+		//TODO: to add the token as a session variable to identify that browser session with a particular person
+		//http://facebook4j.org/javadoc/index.html ver setOAuthAccessToken(AccessToken accessToken, String callbackURL) 
+		//si sirve para obtener un code de un access token como hace
+		//https://graph.facebook.com/oauth/client_code?access_token=...&client_secret=...&redirect_uri=...&client_id=...
 		return "/facebook/index";
 	}
 	

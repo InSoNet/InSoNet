@@ -63,7 +63,7 @@ public class HomeController {
 	}*/
 	
 	@RequestMapping(value={"/", "/index"}, method=RequestMethod.GET)
-    public String defaultHandler(Model model) {
+    public String defaultHandler(HttpServletRequest request, Model model) {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		User domainUser;
 		UserDetails userDetails = null;
@@ -76,6 +76,7 @@ public class HomeController {
         }
 		model.addAttribute("user", userDetails);
 		model.addAttribute("domainUser", domainUser);
+		request.getSession().setAttribute("principal", userDetails);
         return "/index";
     }
 	

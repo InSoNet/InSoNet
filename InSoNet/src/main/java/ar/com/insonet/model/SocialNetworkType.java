@@ -1,18 +1,22 @@
 package ar.com.insonet.model;
 
+import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 @Entity
-@Table(name="socialNetworkType")
+@Table(name="socialnetworktype")
 public class SocialNetworkType {
 	
 	@Id
 	@GeneratedValue
 	private int Id;
-	private String SocialNetwork;
+	@NotNull
+	private String socialNetworkName;
 	
 	public int getId() {
 		return Id;
@@ -20,11 +24,12 @@ public class SocialNetworkType {
 	public void setId(int id) {
 		Id = id;
 	}
-	public String getSocialNetwork() {
-		return SocialNetwork;
+	@OneToOne(mappedBy="socialNetworkType")
+	public String getSocialNetworkName() {
+		return socialNetworkName;
 	}
-	public void setSocialNetwork(String socialNetwork) {
-		SocialNetwork = socialNetwork;
+	public void setSocialNetworkName(String socialNetworkName) {
+		this.socialNetworkName = socialNetworkName;
 	}
 	
 	

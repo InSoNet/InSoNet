@@ -4,9 +4,11 @@ import java.util.List;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.springframework.stereotype.Repository;
 
 import ar.com.insonet.model.InsonetUser;
+import ar.com.insonet.model.User;
 
 @Repository
 public class InsonetUserDAOImpl implements InsonetUserDAO {
@@ -28,6 +30,7 @@ public class InsonetUserDAOImpl implements InsonetUserDAO {
 		insonetUserToUpdate.setRole(insonetUser.getRole());
 		insonetUserToUpdate.setSurname(insonetUser.getSurname());
 		insonetUserToUpdate.setEnabled(insonetUser.isEnabled());
+		insonetUserToUpdate.setSocialNetwork(insonetUser.getSocialNetwork());
 		getCurrentSession().update(insonetUserToUpdate);
 	}
 
@@ -35,6 +38,13 @@ public class InsonetUserDAOImpl implements InsonetUserDAO {
 		InsonetUser insonetUser = (InsonetUser) getCurrentSession().get(
 				InsonetUser.class, id);
 		return insonetUser;
+	}
+	
+	public InsonetUser getInsonetUserByUsername(String username) {
+		Transaction tx =  getCurrentSession().beginTransaction();
+		InsonetUser user = (InsonetUser) getCurrentSession().createQuery("from User u where u.username = :username").setParameter("username", username).uniqueResult();
+		tx.commit();
+		return user;
 	}
 
 	public void deleteInsonetUser(int id) {

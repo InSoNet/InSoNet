@@ -15,8 +15,8 @@ public class Configuration {
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE)
 	private Long Id;
-	@NotNull
-	private int userInsonetId;
+	//@NotNull
+	//private int userInsonetId;
 	@NotNull
 	private String parameter;
 	@NotNull
@@ -33,13 +33,13 @@ public class Configuration {
 		this.parameter = parameter;
 	}
 
-	public int getUserInsonetId() {
+	/*public int getUserInsonetId() {
 		return userInsonetId;
 	}
 
 	public void setUserInsonetId(int userInsonetId) {
 		this.userInsonetId = userInsonetId;
-	}
+	}*/
 
 	public String getValue() {
 		return value;

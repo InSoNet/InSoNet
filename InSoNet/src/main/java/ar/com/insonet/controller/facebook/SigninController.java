@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
 import ar.com.insonet.service.FacebookServiceImpl;
 
 @Controller
+@Component("facebook/signin")
 public class SigninController {
 	
 	@Autowired
@@ -21,7 +23,6 @@ public class SigninController {
 
 	@Autowired
 	private SigninController(ApplicationContext applicationContext, FacebookServiceImpl facebookService) {
-		//this.ctx = applicationContext;//new ClassPathXmlApplicationContext("classpath:ar/com/insonet/services.xml");
 		this.fbService = facebookService;
 	}
 	

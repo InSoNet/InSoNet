@@ -9,6 +9,7 @@ public interface InsonetUserDAO {
 	public void addInsonetUser(InsonetUser insonetUser);
 	public void updateInsonetUser(InsonetUser insonetUser);
 	public InsonetUser getInsonetUser(int id);
+	public InsonetUser getInsonetUserByUsername(String username);
 	public void deleteInsonetUser(int id);
 	public List<InsonetUser> getInsonetUsers();
 

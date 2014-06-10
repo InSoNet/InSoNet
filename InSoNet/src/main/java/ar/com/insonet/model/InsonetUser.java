@@ -30,17 +30,15 @@ public class InsonetUser extends User {
 	@NotNull
 	@NotEmpty
 	@Column(unique=true)
-	@Pattern(regexp = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\."
-			+ "[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@"
-			+ "(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message = "{invalid.email}")
 	private String email;
-	private Integer celular;
+	private Integer phone;
 
-	// @OneToMany(mappedBy="sociable")
-	@OneToMany(targetEntity = SociableImpl.class)
-	private Collection<AbstractSociable> sociable = new ArrayList<AbstractSociable>();
+	//@OneToMany(targetEntity = SociableImpl.class)
+	//private Collection<AbstractSociable> sociable = new ArrayList<AbstractSociable>();
 	@OneToMany(targetEntity = Configuration.class)
 	private List<Configuration> personalConfiguration = new ArrayList<Configuration>();
+	@OneToMany(targetEntity = SocialNetwork.class)
+	private List<SocialNetwork> socialNetwork = new ArrayList<SocialNetwork>();
 	
 	public InsonetUser() {
 		super();
@@ -52,9 +50,9 @@ public class InsonetUser extends User {
 		this.name = name;
 		this.surname = surname;
 		this.email = email;
-		this.celular = celular;
+		this.phone = celular;
 	}
-
+	
 	public String getName() {
 		return name;
 	}
@@ -79,15 +77,15 @@ public class InsonetUser extends User {
 		this.email = email;
 	}
 
-	public Integer getCelular() {
-		return celular;
+	public Integer getPhone() {
+		return phone;
 	}
 
-	public void setCelular(Integer celular) {
-		this.celular = celular;
+	public void setPhone(Integer phone) {
+		this.phone = phone;
 	}
 
-	public List<AbstractSociable> getSociable() {
+	/*public List<AbstractSociable> getSociable() {
 		List<AbstractSociable> list = new ArrayList<>(this.sociable);
 		return list;
 	}
@@ -95,7 +93,7 @@ public class InsonetUser extends User {
 	@OneToMany(cascade = CascadeType.ALL)
 	public void setSociable(Collection<AbstractSociable> sociable) {
 		this.sociable = sociable;
-	}
+	}*/
 
 	public List<Configuration> getPersonalConfiguration() {
 		return this.personalConfiguration;
@@ -106,5 +104,14 @@ public class InsonetUser extends User {
 		this.personalConfiguration.add(configuration);
 	}
 
+	public List<SocialNetwork> getSocialNetwork() {
+		List<SocialNetwork> list = new ArrayList<>(this.socialNetwork);
+		return list;
+	}
+
+	@OneToMany(cascade = CascadeType.ALL)
+	public void setSocialNetwork(List<SocialNetwork> socialNetwork) {
+		this.socialNetwork = socialNetwork;
+	}
 	
 }

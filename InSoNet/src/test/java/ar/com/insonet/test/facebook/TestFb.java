@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.awt.PageAttributes.MediaType;
 
+import org.hibernate.Session;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -23,15 +24,21 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.request.ServletWebRequest;
 
+import ar.com.insonet.dao.HibernateUtil;
+
 public class TestFb {
 
 	@Test
 	public void testLogin() throws FacebookException {
 		Facebook facebook = new FacebookFactory().getInstance();
-        String url = "https://www.facebook.com/dialog/oauth?client_id=194602547388876&redirect_uri=http://localhost:8080/InSoNet/callback&scope=email,publish_actions";
+        String url = "https://www.facebook.com/dialog/oauth?client_id=194602547388876&redirect_uri=http://localhost:8080/InSoNet/callback&scope=email,publish_actions,read_stream";
 		String result = facebook.getOAuthAuthorizationURL("http://localhost:8080/InSoNet/callback");
         assertEquals(url,result);
 	}
     
-    
+    @Test
+    public void testAddSocialNetwork() throws FacebookException {
+    	Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+    	
+    }
 }

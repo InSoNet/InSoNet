@@ -34,7 +34,6 @@
 		<mapping class="ar.com.insonet.model.Friend" />
 		<mapping class="ar.com.insonet.model.Configuration" />
 		<mapping class="ar.com.insonet.model.Relationship" />
-		<mapping class="ar.com.insonet.model.SociableImpl" />
 		<mapping class="ar.com.insonet.model.SocialNetwork" />
 		<mapping class="ar.com.insonet.model.SocialNetworkType" />
 		<mapping class="ar.com.insonet.model.AccessToken" />
