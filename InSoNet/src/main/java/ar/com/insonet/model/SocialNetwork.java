@@ -19,7 +19,7 @@ public class SocialNetwork {
 	@GeneratedValue
 	private Integer id;
 	@NotNull
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne
 	private SocialNetworkType socialNetworkType;
 	@NotNull
 	private String usernameSocial;

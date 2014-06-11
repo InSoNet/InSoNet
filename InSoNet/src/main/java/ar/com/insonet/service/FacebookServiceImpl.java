@@ -1,5 +1,6 @@
 package ar.com.insonet.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -9,12 +10,15 @@ import javax.servlet.http.HttpServletResponse;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import ar.com.insonet.dao.HibernateUtil;
 import ar.com.insonet.dao.InsonetUserDAO;
 import ar.com.insonet.dao.SocialNetworkDAO;
 import ar.com.insonet.dao.SocialNetworkTypeDAO;
+import ar.com.insonet.dao.UserDAO;
 import ar.com.insonet.model.AccessToken;
 import ar.com.insonet.model.InsonetUser;
 import ar.com.insonet.model.SocialNetwork;
@@ -39,6 +43,8 @@ public class FacebookServiceImpl {
 	SocialNetworkTypeDAO socialNetworkTypeDAO;
 	@Autowired
 	InsonetUserDAO insonetUserDAO;
+	@Autowired
+    private UserDAO userDAO;
 	
 	Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 	
@@ -63,7 +69,10 @@ public class FacebookServiceImpl {
 		String oauthCode = request.getParameter("code");
 		try {
 			fbToken = facebook.getOAuthAccessToken(oauthCode);
-			String username = facebook.getMe().getUsername();
+			String usernameSocial = facebook.getMe().getUsername();
+			if(usernameSocial == null){
+				usernameSocial=facebook.getMe().getName();
+			}
 			accessToken.setExpire(fbToken.getExpires());
 			accessToken.setAccessToken(fbToken.getToken());
 			//if (facebook.getAuthorization().isEnabled()) {
@@ -77,20 +86,31 @@ public class FacebookServiceImpl {
 			//1=facebook,2=twitter
 			SocialNetworkType socialNetworkType = socialNetworkTypeDAO.getSocialNetworkType(1);
 			socialNetwork.setSocialNetworkType(socialNetworkType);
-			socialNetwork.setUsernameSocial(username);		
+			
+			socialNetwork.setUsernameSocial(usernameSocial);
 			//Habilitar uno de los dos para guardar socialNetwork 
 			//session.save(socialNetwork);
 			//socialNetworkDAO.addSocialNetwork(socialNetwork);
 			UserDetails userDetails = (UserDetails)request.getSession().getAttribute("principal");
-			String loginUser = userDetails.getUsername();
-			InsonetUser insonetUser = insonetUserDAO.getInsonetUserByUsername(loginUser);
-			List<SocialNetwork> list =  insonetUser.getSocialNetwork();
+			if(userDetails == null) {
+				Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+				userDetails = (UserDetails) auth.getPrincipal();
+				request.getSession().setAttribute("principal", userDetails);
+			}
+			String loggedUsername = userDetails.getUsername();
+			InsonetUser insonetUser = insonetUserDAO.getInsonetUserByUsername(loggedUsername);
+			//lo carga por Lazy, probar!
+			//ar.com.insonet.model.User domainUser = userDAO.getUserByUsername(loggedUsername);
+			//insonetUser.setRole(domainUser.getRole());
+			//Transaction tx = session.beginTransaction();
+			List<SocialNetwork> list = insonetUser.getSocialNetwork();
+			//List<SocialNetwork> list =  new ArrayList<SocialNetwork>();
 			list.add(socialNetwork);
 			insonetUser.setSocialNetwork(list);
-			Transaction tx = session.beginTransaction();
+			
 			insonetUserDAO.updateInsonetUser(insonetUser);
 			
-			tx.commit();
+			//tx.commit();
 			
 			request.getSession().setAttribute("accessToken", accessToken);
 			

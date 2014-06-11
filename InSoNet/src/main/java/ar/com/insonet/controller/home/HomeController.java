@@ -61,7 +61,7 @@ public class HomeController {
 	protected void initBinder(WebDataBinder binder) {
 		binder.addValidators(new InsonetUserValidator());
 	}*/
-	
+    
 	@RequestMapping(value={"/", "/index"}, method=RequestMethod.GET)
     public String defaultHandler(HttpServletRequest request, Model model) {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -70,10 +70,12 @@ public class HomeController {
 		if (auth.getPrincipal() instanceof UserDetails) {
 			//user = ((UserDetails)auth.getPrincipal()).getUsername();
 			userDetails = (UserDetails)auth.getPrincipal();
-			domainUser = userDAO.getUserByUsername(userDetails.getUsername());
+			
         } else {
-            return "/index";
+        	userDetails = (UserDetails) request.getUserPrincipal();
+            //return "/index";
         }
+		domainUser = userDAO.getUserByUsername(userDetails.getUsername());
 		model.addAttribute("user", userDetails);
 		model.addAttribute("domainUser", domainUser);
 		request.getSession().setAttribute("principal", userDetails);

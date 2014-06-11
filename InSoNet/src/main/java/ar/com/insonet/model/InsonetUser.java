@@ -4,6 +4,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -37,7 +38,7 @@ public class InsonetUser extends User {
 	//private Collection<AbstractSociable> sociable = new ArrayList<AbstractSociable>();
 	@OneToMany(targetEntity = Configuration.class)
 	private List<Configuration> personalConfiguration = new ArrayList<Configuration>();
-	@OneToMany(targetEntity = SocialNetwork.class)
+	@OneToMany(cascade= CascadeType.ALL, fetch= FetchType.EAGER)
 	private List<SocialNetwork> socialNetwork = new ArrayList<SocialNetwork>();
 	
 	public InsonetUser() {
@@ -103,9 +104,9 @@ public class InsonetUser extends User {
 	public void setPersonalConfiguration(Configuration configuration) {
 		this.personalConfiguration.add(configuration);
 	}
-
+	@OneToMany(fetch= FetchType.EAGER)
 	public List<SocialNetwork> getSocialNetwork() {
-		List<SocialNetwork> list = new ArrayList<>(this.socialNetwork);
+		List<SocialNetwork> list = new ArrayList<SocialNetwork>(this.socialNetwork);
 		return list;
 	}
 

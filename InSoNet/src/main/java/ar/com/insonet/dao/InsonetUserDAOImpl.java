@@ -22,6 +22,7 @@ public class InsonetUserDAOImpl implements InsonetUserDAO {
 	}
 
 	public void updateInsonetUser(InsonetUser insonetUser) {
+		
 		InsonetUser insonetUserToUpdate = getInsonetUser(insonetUser.getId());
 		//insonetUserToUpdate.setUsername(insonetUser.getUsername());
 		insonetUserToUpdate.setPassword(insonetUser.getPassword());
@@ -30,13 +31,19 @@ public class InsonetUserDAOImpl implements InsonetUserDAO {
 		insonetUserToUpdate.setRole(insonetUser.getRole());
 		insonetUserToUpdate.setSurname(insonetUser.getSurname());
 		insonetUserToUpdate.setEnabled(insonetUser.isEnabled());
-		insonetUserToUpdate.setSocialNetwork(insonetUser.getSocialNetwork());
+		Transaction tx = getCurrentSession().beginTransaction();
+		if (getCurrentSession().isConnected())
+			insonetUserToUpdate.setSocialNetwork(insonetUser.getSocialNetwork());
+		
 		getCurrentSession().update(insonetUserToUpdate);
+		tx.commit();
 	}
 
 	public InsonetUser getInsonetUser(int id) {
+		Transaction tx =  getCurrentSession().beginTransaction();
 		InsonetUser insonetUser = (InsonetUser) getCurrentSession().get(
 				InsonetUser.class, id);
+		tx.commit();
 		return insonetUser;
 	}
 	
