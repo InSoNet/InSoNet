@@ -23,6 +23,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import facebook4j.Facebook;
+import facebook4j.FacebookFactory;
+
 import ar.com.insonet.dao.HibernateUtil;
 import ar.com.insonet.dao.InsonetUserDAO;
 import ar.com.insonet.dao.InsonetUserValidator;
@@ -30,6 +33,7 @@ import ar.com.insonet.dao.UserDAO;
 import ar.com.insonet.model.InsonetUser;
 import ar.com.insonet.model.Role;
 import ar.com.insonet.model.User;
+import ar.com.insonet.service.FacebookServiceImpl;
 import ar.com.insonet.service.SendMailService;
 
 @Controller
@@ -47,6 +51,8 @@ public class HomeController {
     private Validator validator;
     @Autowired
     UserDAO userDAO;
+    @Autowired
+    FacebookServiceImpl facebookService;
     
     public void setValidator(Validator validator) {
         this.validator = validator;
@@ -75,10 +81,21 @@ public class HomeController {
         	userDetails = (UserDetails) request.getUserPrincipal();
             //return "/index";
         }
+		//Si llego aca es porque se logueo correctamente
+		//TODO: Obtener la redes sociales que tiene agregadas el usuario
+		//TODO: Primero verificar si por Lazy Spring las carga por defecto al llamar a getSocialNetwork
+		Facebook facebook = (Facebook) request.getSession().getAttribute("facebook");
+		if (facebook == null) {
+			facebook = new FacebookFactory().getInstance();
+			request.getSession().setAttribute("facebook", facebook);
+		}
 		domainUser = userDAO.getUserByUsername(userDetails.getUsername());
 		model.addAttribute("user", userDetails);
 		model.addAttribute("domainUser", domainUser);
+		model.addAttribute("fb", facebookService);
 		request.getSession().setAttribute("principal", userDetails);
+		request.getSession().setAttribute("fb", facebookService);
+		request.getSession().setAttribute("domainUser", domainUser);
         return "/index";
     }
 	
@@ -185,6 +202,34 @@ public class HomeController {
         }
 		
 		return "redirect:/index";
+    }
+    
+    @RequestMapping(value="/addnet", method = RequestMethod.GET)
+    public String addSocialNetwork(HttpServletRequest request, Model model) {
+    	//TODO Implementar programacion orientada a aspectos
+    	Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		User domainUser = null;
+		UserDetails userDetails = null;
+		if (auth.getPrincipal() instanceof UserDetails) {
+			userDetails = (UserDetails)auth.getPrincipal();
+		} else {
+        	userDetails = (UserDetails) request.getUserPrincipal();
+        }
+		
+		Facebook facebook = (Facebook) request.getSession().getAttribute("facebook");
+		if (facebook == null) {
+			facebook = new FacebookFactory().getInstance();
+			request.getSession().setAttribute("facebook", facebook);
+		}
+		domainUser = userDAO.getUserByUsername(userDetails.getUsername());
+		model.addAttribute("user", userDetails);
+		model.addAttribute("domainUser", domainUser);
+		model.addAttribute("fb", facebookService);
+		request.getSession().setAttribute("principal", userDetails);
+		request.getSession().setAttribute("fb", facebookService);
+		request.getSession().setAttribute("domainUser", domainUser);
+    	
+    	return "/addnet";
     }
 
 }

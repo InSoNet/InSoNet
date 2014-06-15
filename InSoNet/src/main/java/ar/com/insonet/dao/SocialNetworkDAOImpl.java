@@ -3,6 +3,7 @@ package ar.com.insonet.dao;
 import java.util.List;
 
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 import ar.com.insonet.model.InsonetUser;
 import ar.com.insonet.model.SocialNetwork;
@@ -31,7 +32,9 @@ public class SocialNetworkDAOImpl implements SocialNetworkDAO {
 
 	@Override
 	public SocialNetwork getSocialNetwork(int id) {
+		Transaction tx = getCurrentSession().beginTransaction();
 		SocialNetwork socialNetwork = (SocialNetwork) getCurrentSession().get(SocialNetwork.class, id);
+		tx.commit();
 		return socialNetwork;
 	}
 

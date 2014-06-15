@@ -1,20 +1,12 @@
-<%@ page import="java.util.Date" %>
-<%@ page import="java.util.List" %>
-<%@ page import="java.net.URL" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
 <%@ page import="ar.com.insonet.model.InsonetUser" %>
-<%@ page import="ar.com.insonet.model.SocialNetwork" %>
-<%@ page import="ar.com.insonet.service.FacebookServiceImpl" %>
-<%@ page import="facebook4j.Facebook" %>
-<%@ page import="facebook4j.Post" %>
-<%@ page import="facebook4j.ResponseList" %>
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-	pageEncoding="ISO-8859-1"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<!doctype html">
-<html lang="es">
+<!doctype html>
+<html>
 <head>
 <meta charset="UTF-8">
-<title>InSoNet</title>
+<title>Agregar Red Social</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!-- Bootstrap -->
 <link href="<c:url value='/resources/css/bootstrap.min.css' />" rel="stylesheet" type="text/css">
@@ -67,7 +59,7 @@
                     <button type="button" class="btn btn-default btn-xs <c:if test="${domainUser.getSocialNetwork().isEmpty()}">disabled</c:if>" title="Agregar Columna">
                       <span class="glyphicon glyphicon-plus"></span> Agregar Columna
                     </button>
-                    <button type="button" onclick="location.href='${pageContext.request.contextPath}/addnet';" class="btn btn-default btn-xs <c:if test="${domainUser.getSocialNetwork().isEmpty()}">disabled</c:if>" title="Agregar red social">
+                    <button type="button" class="btn btn-default btn-xs" title="Agregar red social">
                       <span class="glyphicon glyphicon-plus"></span> Agregar Red Social
                     </button>
                     
@@ -77,7 +69,7 @@
                 <div>
                     <form  style="margin-top:0px;padding-left:0px;" role="search">
                         <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Buscar Personas, Páginas, etc.">
+                            <input type="text" class="form-control" placeholder="Buscar Personas, PÃ¡ginas, etc.">
                              <div class="input-group-btn">
                                 <button type="submit" class="btn btn-default" title="Buscar" onclick='location.href="resultadoDeBusqueda.html"; return false;'>Buscar</button>
                             </div>
@@ -100,7 +92,7 @@
                         <button type="button" class="btn" name="notificaciones" title="Notificaciones">
                            <span class="glyphicon glyphicon-globe"></span>
                         </button>
-                        <button type="button" class="btn-sm btn-default pull-right" onclick="location.href='<c:url value="/j_spring_security_logout" />';" name="logout" title="Cerrar sesión">
+                        <button type="button" class="btn-sm btn-default pull-right" onclick="location.href='<c:url value="/j_spring_security_logout" />';" name="logout" title="Cerrar sesiÃ³n">
                             <span class="glyphicon glyphicon-off"></span>
                         </button>
                         
@@ -116,54 +108,27 @@
             </div>
             <div class="col-lg-6">
                 <div class=" btn-group-sm">
-	                <button type="button" class="btn" name="usuario" title="Configurar cuenta de usuario" onclick="location.href='${pageContext.request.contextPath}/profile';">
-	                   <span class="glyphicon glyphicon-user"></span>
-	                </button>
-	                
-	                <button type="button" class="btn-sm btn-default pull-right" onclick="location.href='<c:url value="/j_spring_security_logout" />';" name="logout" title="Cerrar sesión">
-	                    <span class="glyphicon glyphicon-off"></span>
-	                </button>
+                    <button type="button" class="btn" name="usuario" title="Configurar cuenta de usuario" onclick="location.href='${pageContext.request.contextPath}/profile';">
+                       <span class="glyphicon glyphicon-user"></span>
+                    </button>
+                    
+                    <button type="button" class="btn-sm btn-default pull-right" onclick="location.href='<c:url value="/j_spring_security_logout" />';" name="logout" title="Cerrar sesiÃ³n">
+                        <span class="glyphicon glyphicon-off"></span>
+                    </button>
                 </div>
             </div>
         </nav>
     </c:when>
-</c:choose>  
-    
+</c:choose>
     </div>
     <div class="row">
-    <c:if test="${domainUser.isEnabled() == false}">
-        <p class="alert alert-danger">
-            Por favor confirme su registro por medio del correo que se le envio!<br/>
-            Para disponer de toda la funcionalidad de Insonet.
+        <p>
+            <a href="${pageContext.request.contextPath}/facebook/signin" class="btn btn-default btn-lg <c:if test="${domainUser.isEnabled() == false}">disabled</c:if>" role="button" id="addFacebook" title="Agregar una cuenta de Facebook">Agregar una cuenta de Facebook</a>
         </p>
-    </c:if>           
+        <p>
+            <a href="${pageContext.request.contextPath}/twitter" id="addTwitter" class="btn btn-primary btn-lg <c:if test="${domainUser.isEnabled() == false}">disabled</c:if>" title="Agregar una cuenta de Twitter" role="button">Agregar una cuenta de Twitter</a>
+        </p>
     </div>
-<%FacebookServiceImpl fb = (FacebookServiceImpl) request.getSession().getAttribute("fb");%>
-<%InsonetUser domainUser = (InsonetUser) request.getSession().getAttribute("domainUser");%>
-<%List<SocialNetwork> nets = domainUser.getSocialNetwork();%>
-<% if (nets.size() > 0) {%>
-    <div class="row">    
-    <%for(SocialNetwork n : nets) {%>
-        <div class="col-lg-6">        
-        <%ResponseList<Post> posts = fb.getPosts(request, n.getId()); %>
-        <% for(Post p : posts) { %>
-            <div class="media">
-                <a class="pull-left" href="#">
-                    <img class="media-object" src="holder.js/64x64" alt="Foto de perfil de <%=n.getUsernameSocial()%>" class="img-thumbnail" style="width:64px; height:64px;">
-                </a>
-            <% if (p.getMessage() != null) {%>
-                <%=domainUser.getSocialNetwork().get(0).getUsernameSocial() + " " + p.getCreatedTime() + " " + p.getMessage() %>
-            <% }%>
-            <% URL url = p.getPicture();%>
-            <% if (url != null) { %>
-               <img class="media-object" src="<%=url.toString()%>" alt="Foto que publico <%=n.getUsernameSocial() %>" class="img-thumbnail" style="width:140px; height:180px;">
-            <% }%>
-            </div>
-        <% }%>
-        </div>
-    <%}%>    
-    </div>
-<% }%>
 </div>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="<c:url value='/resources/js/bootstrap.min.js'/>"></script>

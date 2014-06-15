@@ -14,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import ar.com.insonet.dao.AccessTokenDAO;
 import ar.com.insonet.dao.HibernateUtil;
 import ar.com.insonet.dao.InsonetUserDAO;
 import ar.com.insonet.dao.SocialNetworkDAO;
@@ -37,6 +38,8 @@ public class FacebookServiceImpl {
 	AccessToken accessToken;
 	@Autowired
 	SocialNetwork socialNetwork;
+	@Autowired
+	AccessTokenDAO accessTokenDAO;
 	@Autowired
 	SocialNetworkDAO socialNetworkDAO;
 	@Autowired 
@@ -70,9 +73,11 @@ public class FacebookServiceImpl {
 		try {
 			fbToken = facebook.getOAuthAccessToken(oauthCode);
 			String usernameSocial = facebook.getMe().getUsername();
-			if(usernameSocial == null){
+			if(usernameSocial == null) {
 				usernameSocial=facebook.getMe().getName();
 			}
+			//TODO: solo agregar la red social si es nueva.
+			//TODO: por aca solo pasa si es nueva.
 			accessToken.setExpire(fbToken.getExpires());
 			accessToken.setAccessToken(fbToken.getToken());
 			//if (facebook.getAuthorization().isEnabled()) {
@@ -124,7 +129,7 @@ public class FacebookServiceImpl {
 		//http://facebook4j.org/javadoc/index.html ver setOAuthAccessToken(AccessToken accessToken, String callbackURL) 
 		//si sirve para obtener un code de un access token como hace
 		//https://graph.facebook.com/oauth/client_code?access_token=...&client_secret=...&redirect_uri=...&client_id=...
-		return "/facebook/index";
+		return "/index";
 	}
 	
 	public String logout(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -160,19 +165,40 @@ public class FacebookServiceImpl {
 		return "/facebook/posts?list";
 	}
 	
-	public ResponseList<Post> getPosts(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ResponseList<Post> getPosts(HttpServletRequest request, int idfb) throws Exception {
 		ResponseList<Post> postsList;
 		request.setCharacterEncoding("UTF-8");
 
 		Facebook facebook = (Facebook) request.getSession().getAttribute("facebook");
+		AccessToken accesstokenDB = socialNetworkDAO.getSocialNetwork(idfb).getAccessToken();
+		facebook4j.auth.AccessToken accesstoken = new facebook4j.auth.AccessToken(accesstokenDB.getAccessToken());
 		try {
-			postsList = facebook.getPosts();
-			
+			facebook.setOAuthAccessToken(accesstoken);
+			postsList = facebook.getPosts();			
 		} catch (FacebookException e) {
 			throw new ServletException(e);
 		}
-				
+		
 		return postsList;
+	}
+	
+	public Post getPost(HttpServletRequest request, int idfb, String idpost) throws FacebookException {
+		Post post = null;
+		Facebook facebook = (Facebook) request.getSession().getAttribute("facebook");
+		//Obtenemos red social y su access_token
+		AccessToken accesstokenDB = socialNetworkDAO.getSocialNetwork(idfb).getAccessToken();
+		facebook4j.auth.AccessToken accesstoken = new facebook4j.auth.AccessToken(accesstokenDB.getAccessToken());
+		facebook.setOAuthAccessToken(accesstoken);
+		
+		ResponseList<Post> list = facebook.getPosts();
+		for (Post p : list) {
+	        if (p.getId() == idpost) {
+	            post = p;
+	            break;
+	        }
+	    }
+		
+		return post;
 	}
 	
 	public ResponseList<Friend> getFriends(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -204,4 +230,5 @@ public class FacebookServiceImpl {
 		
 		return postsList;
 	}
+	
 }

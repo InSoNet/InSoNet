@@ -36,9 +36,5 @@ public class TestFb {
         assertEquals(url,result);
 	}
     
-    @Test
-    public void testAddSocialNetwork() throws FacebookException {
-    	Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-    	
-    }
+    
 }

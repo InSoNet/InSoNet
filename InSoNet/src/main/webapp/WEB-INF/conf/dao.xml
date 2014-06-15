@@ -9,4 +9,5 @@
     <bean id="insonetUserDAO" class="ar.com.insonet.dao.InsonetUserDAOImpl"></bean>
     <bean id="socialNetworkDAO" class="ar.com.insonet.dao.SocialNetworkDAOImpl"></bean>
     <bean id="socialNetworkTypeDAO" class="ar.com.insonet.dao.SocialNetworkTypeDAOImpl"></bean>
+    <bean id="accessTokenDAO" class="ar.com.insonet.dao.AccessTokenDAOImpl"></bean>
 </beans>

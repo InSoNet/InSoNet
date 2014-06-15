@@ -39,17 +39,17 @@ public class ProfileController {
         return "redirect:" + urlTarget;
 	}
 	
-	@RequestMapping(value="/facebook/posts", params="list", method=RequestMethod.GET)
+	/*@RequestMapping(value="/facebook/posts", params="list", method=RequestMethod.GET)
 	public String postListHandler(HttpServletRequest request,	HttpServletResponse response, Model model) throws Exception {
 		
 		ResponseList<Post> postsList;
 		
-		postsList = fbService.getPosts(request, response);
+		postsList = fbService.getPosts(request, request);
         
         model.addAttribute("posts", postsList);
         
         return "/facebook/posts";
-	}
+	}*/
 	
 	@RequestMapping(value="/facebook/friends")
 	protected String friendsHandler(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {

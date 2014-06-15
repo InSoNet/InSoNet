@@ -50,5 +50,11 @@ public class AccessTokenDAOImpl implements AccessTokenDAO {
 	public List<AccessToken> getAllAccessTokens() {
 		return getCurrentSession().createQuery("from access_token").list();
 	}
+
+	/*@Override
+	public AccessToken getAccessTokenBy(String user) {
+		getCurrentSession().createQuery("from socialnetwork").list();
+		return null;
+	}*/
 	
 }
