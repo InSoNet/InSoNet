@@ -1,5 +1,6 @@
 package ar.com.insonet.dao;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -11,8 +12,9 @@ import org.springframework.stereotype.Repository;
 import ar.com.insonet.model.Role;
 
 @Repository
-public class RoleDAOImpl implements RoleDAO {
+public class RoleDAOImpl implements RoleDAO, Serializable {
 
+	private static final long serialVersionUID = 1L;
 	private SessionFactory sessionFactory;
 
 	private Session getCurrentSession() {

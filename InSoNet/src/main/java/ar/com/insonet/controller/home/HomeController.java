@@ -92,11 +92,12 @@ public class HomeController {
 		domainUser = userDAO.getUserByUsername(userDetails.getUsername());
 		model.addAttribute("user", userDetails);
 		model.addAttribute("domainUser", domainUser);
-		model.addAttribute("fb", facebookService);
-		request.getSession().setAttribute("principal", userDetails);
+		//model.addAttribute("fb", facebookService);
+		//request.getSession().setAttribute("principal", userDetails);
 		request.getSession().setAttribute("fb", facebookService);
 		request.getSession().setAttribute("domainUser", domainUser);
-        return "/index";
+        
+		return "/index";
     }
 	
 	@RequestMapping(value = "/signup", method = RequestMethod.GET)
@@ -222,12 +223,12 @@ public class HomeController {
 			request.getSession().setAttribute("facebook", facebook);
 		}
 		domainUser = userDAO.getUserByUsername(userDetails.getUsername());
-		model.addAttribute("user", userDetails);
+		//model.addAttribute("user", userDetails);
 		model.addAttribute("domainUser", domainUser);
-		model.addAttribute("fb", facebookService);
-		request.getSession().setAttribute("principal", userDetails);
-		request.getSession().setAttribute("fb", facebookService);
-		request.getSession().setAttribute("domainUser", domainUser);
+		//model.addAttribute("fb", facebookService);
+		//request.getSession().setAttribute("principal", userDetails);
+		//request.getSession().setAttribute("fb", facebookService);
+		//request.getSession().setAttribute("domainUser", domainUser);
     	
     	return "/addnet";
     }

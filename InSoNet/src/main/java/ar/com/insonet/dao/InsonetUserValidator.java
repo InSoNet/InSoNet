@@ -8,7 +8,7 @@ import ar.com.insonet.model.InsonetUser;
 
 public class InsonetUserValidator implements Validator {
 
-	public boolean supports(Class insonetUser) {
+	public boolean supports(@SuppressWarnings("rawtypes") Class insonetUser) {
 		
 		return InsonetUser.class.equals(insonetUser);
 	}

@@ -1,5 +1,7 @@
 package ar.com.insonet.model;
 
+import java.io.Serializable;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -11,10 +13,13 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import ar.com.insonet.model.SocialNetworkType;
+import ar.com.insonet.model.AccessToken;
 
 @Entity
 @Table(name="socialnetwork")
-public class SocialNetwork {
+public class SocialNetwork implements Serializable {
+	
+	private static final long serialVersionUID = -30398628290038867L;
 	@Id
 	@GeneratedValue
 	private Integer id;
@@ -46,6 +51,7 @@ public class SocialNetwork {
 	public void setUsernameSocial(String usernameSocial) {
 		this.usernameSocial = usernameSocial;
 	}
+	//@OneToOne(cascade=CascadeType.ALL, mappedBy="socialNetwork")
 	public AccessToken getAccessToken() {
 		return accessToken;
 	}

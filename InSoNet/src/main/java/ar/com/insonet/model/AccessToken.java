@@ -12,6 +12,8 @@ import javax.persistence.Temporal;
 import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.stereotype.Repository;
+
 
 /**
  * https://developers.facebook.com/docs/facebook-login/access-tokens
@@ -22,7 +24,7 @@ import javax.validation.constraints.NotNull;
 @Table(name = "accesstoken")
 public class AccessToken implements Serializable {
 		
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -132808273190787764L;
 	@Id
 	@GeneratedValue
 	private Integer id;
@@ -50,7 +52,7 @@ public class AccessToken implements Serializable {
 	 * @return String
 	 */
 	
-	@OneToOne(mappedBy="accessToken")
+	//@OneToOne(mappedBy="accessToken")
 	public String getAccessToken() {
 		return accessToken;
 	}
@@ -85,6 +87,7 @@ public class AccessToken implements Serializable {
 	public void setMachineId(String machineId) {
 		this.machineId = machineId;
 	}
+	
 	
 	
 }

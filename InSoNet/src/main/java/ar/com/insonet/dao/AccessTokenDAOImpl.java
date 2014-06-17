@@ -1,5 +1,6 @@
 package ar.com.insonet.dao;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.hibernate.Session;
@@ -7,8 +8,9 @@ import org.hibernate.SessionFactory;
 
 import ar.com.insonet.model.AccessToken;
 
-public class AccessTokenDAOImpl implements AccessTokenDAO {
+public class AccessTokenDAOImpl implements AccessTokenDAO, Serializable {
 
+	private static final long serialVersionUID = 1L;
 	private SessionFactory sessionFactory;
 	
 	private Session getCurrentSession() {

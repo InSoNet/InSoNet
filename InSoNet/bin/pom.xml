@@ -1,0 +1,338 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>ar.com.insonet</groupId>
+	<artifactId>InSoNet</artifactId>
+	<packaging>war</packaging>
+	<version>0.3.0</version>
+	<name>InSoNet Maven Webapp</name>
+	<url>https://github.com/sergiogman/InSoNet</url>
+	<properties>
+		<!-- La version 4.3 no es compatible con jpa 2.0 -->
+		<hibernate.version>4.2.12.Final</hibernate.version>
+		<mysql.connector.version>5.1.21</mysql.connector.version>
+		<spring.version>3.2.8.RELEASE</spring.version>
+		<jdk.version>1.7</jdk.version>
+		
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>javax.transaction</groupId>
+			<artifactId>jta</artifactId>
+			<version>1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>net.riccardocossu.autodoc</groupId>
+			<artifactId>autodoc-base</artifactId>
+			<version>0.3.0</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+			<version>1.1.0.Final</version>
+		</dependency>
+		<dependency>
+		    <groupId>javax.mail</groupId>
+		    <artifactId>mail</artifactId>
+		    <version>1.4.7</version>
+		</dependency>
+		<!-- dependency> <groupId>org.testng</groupId> <artifactId>testng</artifactId> 
+			<version>6.8.8</version> <scope>test</scope> </dependency -->
+		<dependency>
+			<groupId>org.jboss.logging</groupId>
+			<artifactId>jboss-logging</artifactId>
+			<version>3.1.3.GA</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml</groupId>
+			<artifactId>classmate</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.el</groupId>
+			<artifactId>javax.el-api</artifactId>
+			<version>2.2.4</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.web</groupId>
+			<artifactId>javax.el</artifactId>
+			<version>2.2.4</version>
+		</dependency>
+		<!-- DB related dependencies -->
+		<!-- dependency> <groupId>org.hibernate</groupId> <artifactId>ejb3-persistence</artifactId> 
+			<version>1.0.2.GA</version> </dependency -->
+		
+	    <dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>${hibernate.version}</version>
+		</dependency>
+		<dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <version>${hibernate.version}</version>
+        </dependency>		
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>5.1.1.Final</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.5</version>
+		</dependency>
+		<dependency>
+			<groupId>dom4j</groupId>
+			<artifactId>dom4j</artifactId>
+			<version>1.6.1</version>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.17</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.7.5</version>
+		</dependency>
+		<dependency>
+			<groupId>javassist</groupId>
+			<artifactId>javassist</artifactId>
+			<version>3.12.1.GA</version>
+		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>${mysql.connector.version}</version>
+		</dependency>
+        <dependency>
+		    <groupId>javax.activation</groupId>
+		    <artifactId>activation</artifactId>
+		    <version>1.1</version>
+		</dependency>
+
+		<!-- Spring -->
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-context-support</artifactId>
+		    <version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aop</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+			<version>3.2.3.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+			<version>3.2.3.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
+			<version>3.2.3.RELEASE</version>
+		</dependency>
+		<!-- AspectJ -->
+        <dependency>
+		    <groupId>org.aspectj</groupId>
+		    <artifactId>aspectjweaver</artifactId>
+		    <version>1.8.0</version>
+		</dependency>
+
+		        
+		<!-- Servlet API and JSTL -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.1.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jsp-api</artifactId>
+			<version>2.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>jstl</groupId>
+			<artifactId>jstl</artifactId>
+			<version>1.2</version>
+		</dependency>
+
+		<!-- Test -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.7</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- Social API -->
+		<dependency>
+			<groupId>org.twitter4j</groupId>
+			<artifactId>twitter4j-core</artifactId>
+			<version>[3.0,)</version>
+		</dependency>
+		<dependency>
+			<groupId>org.facebook4j</groupId>
+			<artifactId>facebook4j-core</artifactId>
+			<version>[2.0,)</version>
+		</dependency>
+	</dependencies>
+	<repositories>
+		<!-- repository> <id>spring-maven-milestone</id> <name>Spring Maven Milestone 
+			Repository</name> <url>http://maven.springframework.org/milestone</url> </repository> 
+			<repository> <id>JBoss-maven-releases</id> <name>JBoss Repository</name> 
+			<url>http://search.maven.org</url> </repository -->
+
+		<repository>
+			<id>codehausSnapshots</id>
+			<name>Codehaus Snapshots</name>
+			<releases>
+				<enabled>false</enabled>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>warn</checksumPolicy>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+				<checksumPolicy>fail</checksumPolicy>
+			</snapshots>
+			<url>http://snapshots.maven.codehaus.org/maven2</url>
+			<layout>default</layout>
+		</repository>
+		<repository>
+			<id>Maven2</id>
+			<url>http://repo1.maven.org/maven2/</url>
+		</repository>
+		<repository>
+			<id>java.net-m2</id>
+			<name>java.net - Maven 2</name>
+			<url>https://repository.jboss.org/nexus/content/repositories/java.net-m2</url>
+		</repository>
+
+		<!-- repository> <id>jvnet-nexus-release</id> <url> https://maven.java.net/content/repositories/releases 
+			</url> <snapshots> <updatePolicy>never</updatePolicy> </snapshots> </repository -->
+		<!-- repository> <id>jboss-releases-repository</id> <name>JBoss Releases 
+			Repository</name> <url> https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/ 
+			</url> </repository -->
+		<repository>
+			<id>glassfish</id>
+			<name>Glassfish</name>
+			<url>http://download.java.net/maven/glassfish/</url>
+		</repository>
+		<repository>
+			<id>jboss-maven-repository-releases</id>
+			<name>JBoss Maven Repository releases</name>
+			<url>https://repository.jboss.org/nexus/content/repositories/releases</url>
+		</repository>
+	</repositories>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.4</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.0</version>
+                <configuration>
+                    <source>${jdk.version}</source>
+                    <target>${jdk.version}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+	            <groupId>org.apache.tomcat.maven</groupId>
+	            <artifactId>tomcat7-maven-plugin</artifactId>
+	            <!-- or if you want to use tomcat 6.x
+	            <artifactId>tomcat6-maven-plugin</artifactId>
+	            -->
+	            <version>2.2</version>
+	            <configuration>
+	              <!-- http port -->
+	              <port>9090</port>
+	              <!-- application path always starts with /-->
+	              <path>/</path>
+	              <!-- optional path to a context file -->
+	              <contextFile>${tomcatContextXml}</contextFile>
+	              <!-- optional system propoerties you want to add -->
+	              <systemProperties>
+	                <appserver.base>${project.build.directory}/appserver-base</appserver.base>
+	                <appserver.home>${project.build.directory}/appserver-home</appserver.home>
+	                <derby.system.home>${project.build.directory}/appserver-base/logs</derby.system.home>
+	                <java.io.tmpdir>${project.build.directory}</java.io.tmpdir>
+	              </systemProperties>
+	              <!-- if you want to use test dependencies rather than only runtime -->
+	              <useTestClasspath>false</useTestClasspath>
+	              <!-- optional if you want to add some extra directories into the classloader -->
+	              <additionalClasspathDirs>
+	                <additionalClasspathDir></additionalClasspathDir>
+	              </additionalClasspathDirs>
+	            </configuration>
+	            <!-- For any extra dependencies needed when running embedded Tomcat (not WAR dependencies) add them below -->
+	            <dependencies>
+	              <dependency>
+	                <groupId>org.apache.derby</groupId>
+	                <artifactId>derby</artifactId>
+	                <version>10.10.2.0</version>
+	              </dependency>
+	              <dependency>
+	                <groupId>javax.mail</groupId>
+	                <artifactId>mail</artifactId>
+	                <version>1.4</version>
+	              </dependency>
+	            </dependencies>
+	        </plugin>
+        </plugins>
+    </build>
+</project>

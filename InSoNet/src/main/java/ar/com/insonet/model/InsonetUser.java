@@ -20,7 +20,7 @@ import java.util.ArrayList;
 @DiscriminatorValue("2")
 public class InsonetUser extends User {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -2347330205856960968L;
 	@NotNull
 	@NotEmpty
 	private String name;
@@ -39,6 +39,7 @@ public class InsonetUser extends User {
 	@OneToMany(targetEntity = Configuration.class)
 	private List<Configuration> personalConfiguration = new ArrayList<Configuration>();
 	@OneToMany(cascade= CascadeType.ALL, fetch= FetchType.EAGER)
+	@Column(unique=true)
 	private List<SocialNetwork> socialNetwork = new ArrayList<SocialNetwork>();
 	
 	public InsonetUser() {
@@ -95,12 +96,11 @@ public class InsonetUser extends User {
 	public void setSociable(Collection<AbstractSociable> sociable) {
 		this.sociable = sociable;
 	}*/
-
+	
 	public List<Configuration> getPersonalConfiguration() {
 		return this.personalConfiguration;
 	}
-
-	@OneToMany(cascade = CascadeType.ALL)
+	//@OneToMany(cascade = CascadeType.ALL)
 	public void setPersonalConfiguration(Configuration configuration) {
 		this.personalConfiguration.add(configuration);
 	}

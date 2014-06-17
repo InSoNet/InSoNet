@@ -1,5 +1,6 @@
 package ar.com.insonet.dao;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.hibernate.Session;
@@ -7,7 +8,9 @@ import org.hibernate.Transaction;
 
 import ar.com.insonet.model.SocialNetworkType;
 
-public class SocialNetworkTypeDAOImpl implements SocialNetworkTypeDAO {
+public class SocialNetworkTypeDAOImpl implements SocialNetworkTypeDAO, Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	private Session getCurrentSession() {
 		return HibernateUtil.getSessionFactory().getCurrentSession();

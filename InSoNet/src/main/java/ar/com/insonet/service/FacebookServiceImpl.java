@@ -1,5 +1,6 @@
 package ar.com.insonet.service;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import ar.com.insonet.dao.AccessTokenDAO;
 import ar.com.insonet.dao.HibernateUtil;
@@ -32,8 +36,10 @@ import facebook4j.Friend;
 import facebook4j.Post;
 import facebook4j.ResponseList;
 
-public class FacebookServiceImpl {
+@Service
+public class FacebookServiceImpl implements Serializable {
 	
+	private static final long serialVersionUID = 1L;
 	@Autowired
 	AccessToken accessToken;
 	@Autowired
@@ -56,8 +62,15 @@ public class FacebookServiceImpl {
 	}*/
 	
 	public String signin(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		Facebook facebook = new FacebookFactory().getInstance();
+
+		Facebook facebook = (Facebook) request.getSession().getAttribute("facebook");
+		if (facebook != null) {
+			facebook.shutdown();			
+		}
+		facebook = new FacebookFactory().getInstance();
+		
 		request.getSession().setAttribute("facebook", facebook);
+		
 		StringBuffer callbackURL = request.getRequestURL();
 		int index = callbackURL.lastIndexOf("/");
 		callbackURL.replace(index, callbackURL.length(), "").append("/callback");
@@ -108,12 +121,12 @@ public class FacebookServiceImpl {
 			//ar.com.insonet.model.User domainUser = userDAO.getUserByUsername(loggedUsername);
 			//insonetUser.setRole(domainUser.getRole());
 			//Transaction tx = session.beginTransaction();
-			List<SocialNetwork> list = insonetUser.getSocialNetwork();
-			//List<SocialNetwork> list =  new ArrayList<SocialNetwork>();
+			//List<SocialNetwork> list = insonetUser.getSocialNetwork();
+			List<SocialNetwork> list =  new ArrayList<SocialNetwork>();
 			list.add(socialNetwork);
 			insonetUser.setSocialNetwork(list);
 			
-			insonetUserDAO.updateInsonetUser(insonetUser);
+			socialNetworkDAO.addSocialNetwork(socialNetwork);
 			
 			//tx.commit();
 			
@@ -165,8 +178,9 @@ public class FacebookServiceImpl {
 		return "/facebook/posts?list";
 	}
 	
-	public ResponseList<Post> getPosts(HttpServletRequest request, int idfb) throws Exception {
+	public ResponseList<Post> getPosts(int idfb) throws Exception {
 		ResponseList<Post> postsList;
+		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		request.setCharacterEncoding("UTF-8");
 
 		Facebook facebook = (Facebook) request.getSession().getAttribute("facebook");

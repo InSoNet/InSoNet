@@ -18,5 +18,4 @@
     <import resource="model.xml"/>    
     <!-- Spring MVC configuration -->
     <import resource="webmvc-config.xml" />
-          
 </beans>

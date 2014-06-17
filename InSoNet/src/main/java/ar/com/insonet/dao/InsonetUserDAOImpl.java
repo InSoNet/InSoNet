@@ -18,7 +18,10 @@ public class InsonetUserDAOImpl implements InsonetUserDAO {
 	}
 
 	public void addInsonetUser(InsonetUser insonetUser) {
+		Transaction tx = getCurrentSession().beginTransaction();
 		getCurrentSession().save(insonetUser);
+		tx.commit();
+
 	}
 
 	public void updateInsonetUser(InsonetUser insonetUser) {

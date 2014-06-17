@@ -28,8 +28,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 @DiscriminatorValue(value="2")
 public abstract class User implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-
+	private static final long serialVersionUID = -1069814352144472650L;
 	@Id
 	@GeneratedValue
 	private Integer id;

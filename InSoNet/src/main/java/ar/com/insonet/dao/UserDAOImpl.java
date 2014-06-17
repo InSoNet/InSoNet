@@ -1,5 +1,6 @@
 package ar.com.insonet.dao;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.hibernate.Session;
@@ -11,7 +12,9 @@ import com.mysql.jdbc.exceptions.MySQLIntegrityConstraintViolationException;
 import ar.com.insonet.model.User;
 
 @Repository
-public class UserDAOImpl implements UserDAO {
+public class UserDAOImpl implements UserDAO, Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	private Session getCurrentSession() {
 		return HibernateUtil.getSessionFactory().getCurrentSession();

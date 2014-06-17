@@ -51,7 +51,7 @@ public class PostController {
 	}*/
 	@RequestMapping(value="/facebook/{fb}/list", method=RequestMethod.GET)
 	public ResponseList<Post> list(HttpServletRequest request, int fb) throws Exception {
-		ResponseList<Post> posts = fbService.getPosts(request, fb);
+		ResponseList<Post> posts = fbService.getPosts(fb);
 		
 		return posts;
 	}
