@@ -16,11 +16,11 @@ import facebook4j.ResponseList;
 
 @Controller
 public class PostController {
-
+	@Autowired
 	private FacebookServiceImpl fbService;
 	
-	@Autowired
-	private PostController(ApplicationContext applicationContext, FacebookServiceImpl facebookService) {
+	
+	/*private PostController(ApplicationContext applicationContext, FacebookServiceImpl facebookService) {
 		this.fbService = facebookService;
 	}
 	
@@ -28,7 +28,7 @@ public class PostController {
 	public String index() {
 		
 		return "/post";
-	}
+	}*/
 	/*@RequestMapping(value="/facebook/{fb}/post/", method=RequestMethod.POST)
 	public String publishing(int fb, String message, HttpServletRequest request) {
 		String idpost = fbService().addPost(message);
@@ -39,7 +39,7 @@ public class PostController {
 	public Post show(int fb, String id, HttpServletRequest request) throws FacebookException {
 		//ResponseList<Post> list = null;
 		//Obtenemos el post del facebook indicado
-		Post post = fbService.getPost(request, fb, id);
+		Post post = fbService.getPost(fb, id);
 		
 		return post;
 	}

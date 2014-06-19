@@ -19,13 +19,13 @@ public class SocialNetworkTypeTests {
 		
 		if (setSocialNetworkTypeFb == null) {
 			setSocialNetworkTypeFb = new SocialNetworkType();
-			setSocialNetworkTypeFb.setSocialNetworkName("facebook");
+			setSocialNetworkTypeFb.setSocialNetworkType("facebook");
 			session.save(setSocialNetworkTypeFb);
 		}
 		
 		if (setSocialNetworkTypeTw == null ) {
 			setSocialNetworkTypeTw = new SocialNetworkType();
-			setSocialNetworkTypeTw.setSocialNetworkName("twitter");
+			setSocialNetworkTypeTw.setSocialNetworkType("twitter");
 			session.save(setSocialNetworkTypeTw);
 		}
 		

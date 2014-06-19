@@ -2,6 +2,7 @@ package ar.com.insonet.model;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -19,7 +20,8 @@ public class SocialNetworkType implements Serializable{
 	@GeneratedValue
 	private int Id;
 	@NotNull
-	private String socialNetworkName;
+	@Column(name="socialNetworkType")
+	private String socialNetworkType;
 	
 	public int getId() {
 		return Id;
@@ -28,11 +30,11 @@ public class SocialNetworkType implements Serializable{
 		Id = id;
 	}
 	//@OneToOne(mappedBy="socialNetworkType")
-	public String getSocialNetworkName() {
-		return socialNetworkName;
+	public String getSocialNetworkType() {
+		return socialNetworkType;
 	}
-	public void setSocialNetworkName(String socialNetworkName) {
-		this.socialNetworkName = socialNetworkName;
+	public void setSocialNetworkType(String socialNetworkType) {
+		this.socialNetworkType = socialNetworkType;
 	}
 	
 	

@@ -121,12 +121,12 @@ public class FacebookServiceImpl implements Serializable {
 			//ar.com.insonet.model.User domainUser = userDAO.getUserByUsername(loggedUsername);
 			//insonetUser.setRole(domainUser.getRole());
 			//Transaction tx = session.beginTransaction();
-			//List<SocialNetwork> list = insonetUser.getSocialNetwork();
-			List<SocialNetwork> list =  new ArrayList<SocialNetwork>();
+			List<SocialNetwork> list = insonetUser.getSocialNetwork();
+			//List<SocialNetwork> list =  new ArrayList<SocialNetwork>();
 			list.add(socialNetwork);
 			insonetUser.setSocialNetwork(list);
-			
-			socialNetworkDAO.addSocialNetwork(socialNetwork);
+			insonetUserDAO.updateInsonetUser(insonetUser);
+			//socialNetworkDAO.addSocialNetwork(socialNetwork);
 			
 			//tx.commit();
 			
@@ -196,11 +196,12 @@ public class FacebookServiceImpl implements Serializable {
 		return postsList;
 	}
 	
-	public Post getPost(HttpServletRequest request, int idfb, String idpost) throws FacebookException {
+	public Post getPost(int idfb, String idpost) throws FacebookException {
 		Post post = null;
+		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		Facebook facebook = (Facebook) request.getSession().getAttribute("facebook");
 		//Obtenemos red social y su access_token
-		AccessToken accesstokenDB = socialNetworkDAO.getSocialNetwork(idfb).getAccessToken();
+		/*AccessToken accesstokenDB = socialNetworkDAO.getSocialNetwork(idfb).getAccessToken();
 		facebook4j.auth.AccessToken accesstoken = new facebook4j.auth.AccessToken(accesstokenDB.getAccessToken());
 		facebook.setOAuthAccessToken(accesstoken);
 		
@@ -210,8 +211,8 @@ public class FacebookServiceImpl implements Serializable {
 	            post = p;
 	            break;
 	        }
-	    }
-		
+	    }*/
+		post = facebook.getPost(idpost);
 		return post;
 	}
 	

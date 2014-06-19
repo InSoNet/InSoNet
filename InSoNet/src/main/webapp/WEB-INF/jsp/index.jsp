@@ -67,7 +67,7 @@
                     <button type="button" class="btn btn-default btn-xs <c:if test="${domainUser.getSocialNetwork().isEmpty()}">disabled</c:if>" title="Agregar Columna">
                       <span class="glyphicon glyphicon-plus"></span> Agregar Columna
                     </button>
-                    <button type="button" onclick="location.href='${pageContext.request.contextPath}/addnet';" class="btn btn-default btn-xs <c:if test="${domainUser.getSocialNetwork().isEmpty()}">disabled</c:if>" title="Agregar red social">
+                    <button type="button" onclick="location.href='${pageContext.request.contextPath}/addnet';" class="btn btn-default btn-xs" title="Agregar red social">
                       <span class="glyphicon glyphicon-plus"></span> Agregar Red Social
                     </button>
                     
