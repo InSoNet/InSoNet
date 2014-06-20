@@ -46,7 +46,9 @@ public class SocialNetworkDAOImpl implements SocialNetworkDAO, Serializable {
 	public void deleteSocialNetwork(int id) {
 		SocialNetwork socialNetwork = getSocialNetwork(id);
 		if(socialNetwork != null) {
+			Transaction tx = getCurrentSession().beginTransaction();
 			getCurrentSession().delete(socialNetwork);
+			tx.commit();
 		}
 	}
 

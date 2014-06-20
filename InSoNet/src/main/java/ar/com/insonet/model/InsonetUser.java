@@ -108,7 +108,7 @@ public class InsonetUser extends User {
 		//List<SocialNetwork> list = new ArrayList<SocialNetwork>(this.socialNetwork);
 		return this.socialNetwork;
 	}
-
+	
 	public void setSocialNetwork(List<SocialNetwork> socialNetwork) {
 		this.socialNetwork = socialNetwork;
 	}

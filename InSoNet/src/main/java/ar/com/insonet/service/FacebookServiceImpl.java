@@ -211,6 +211,7 @@ public class FacebookServiceImpl implements Serializable {
 				InsonetUser insonetUser = insonetUserDAO.getInsonetUserByUsername(loggedUsername);
 				//quitamos la red del usuario actual
 				insonetUserDAO.delSocialNetwork(insonetUser, idfb);
+				socialNetworkDAO.deleteSocialNetwork(idfb);
 			}
 			//throw new ServletException("El Usuario ha desautorizado su aplicación", e);
 			
