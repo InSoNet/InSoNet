@@ -43,7 +43,7 @@ public abstract class User implements Serializable {
 	@NotNull
 	private boolean enabled;
 	
-	@OneToOne(cascade=CascadeType.ALL)
+	@OneToOne
 	@JoinTable(name="user_role",
 		joinColumns = {@JoinColumn(name="user_id", referencedColumnName="id")},
 		inverseJoinColumns = {@JoinColumn(name="role_id", referencedColumnName="id")}

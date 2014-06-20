@@ -38,7 +38,7 @@ public class InsonetUser extends User {
 	//private Collection<AbstractSociable> sociable = new ArrayList<AbstractSociable>();
 	//@OneToMany(targetEntity = Configuration.class)
 	//private List<Configuration> personalConfiguration = new ArrayList<Configuration>();
-	@OneToMany(cascade= CascadeType.REMOVE)
+	@OneToMany(cascade= CascadeType.ALL, targetEntity=SocialNetwork.class, fetch=FetchType.EAGER)
 	private List<SocialNetwork> socialNetwork = new ArrayList<SocialNetwork>();
 	
 	public InsonetUser() {
@@ -103,13 +103,12 @@ public class InsonetUser extends User {
 	public void setPersonalConfiguration(Configuration configuration) {
 		this.personalConfiguration.add(configuration);
 	}*/
-	@OneToMany(fetch= FetchType.EAGER)
+	//@OneToMany
 	public List<SocialNetwork> getSocialNetwork() {
-		List<SocialNetwork> list = new ArrayList<SocialNetwork>(this.socialNetwork);
-		return list;
+		//List<SocialNetwork> list = new ArrayList<SocialNetwork>(this.socialNetwork);
+		return this.socialNetwork;
 	}
 
-	@OneToMany(cascade = CascadeType.ALL)
 	public void setSocialNetwork(List<SocialNetwork> socialNetwork) {
 		this.socialNetwork = socialNetwork;
 	}

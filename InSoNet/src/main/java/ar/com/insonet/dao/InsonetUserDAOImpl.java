@@ -1,5 +1,6 @@
 package ar.com.insonet.dao;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.hibernate.Session;
@@ -11,7 +12,9 @@ import ar.com.insonet.model.InsonetUser;
 import ar.com.insonet.model.User;
 
 @Repository
-public class InsonetUserDAOImpl implements InsonetUserDAO {
+public class InsonetUserDAOImpl implements InsonetUserDAO, Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	private Session getCurrentSession() {
 		return HibernateUtil.getSessionFactory().getCurrentSession();
@@ -42,6 +45,16 @@ public class InsonetUserDAOImpl implements InsonetUserDAO {
 		tx.commit();
 	}
 
+	public void addSocialNetwork(InsonetUser insonetUser) {
+		InsonetUser insonetUserToUpdate = getInsonetUser(insonetUser.getId());
+		Transaction tx = getCurrentSession().beginTransaction();
+		if (getCurrentSession().isConnected())
+			insonetUserToUpdate.setSocialNetwork(insonetUser.getSocialNetwork());
+		
+		getCurrentSession().update(insonetUserToUpdate);
+		getCurrentSession().flush();
+		tx.commit();
+	}
 	public InsonetUser getInsonetUser(int id) {
 		Transaction tx =  getCurrentSession().beginTransaction();
 		InsonetUser insonetUser = (InsonetUser) getCurrentSession().get(
@@ -65,7 +78,7 @@ public class InsonetUserDAOImpl implements InsonetUserDAO {
 
 	@SuppressWarnings("unchecked")
 	public List<InsonetUser> getInsonetUsers() {
-		return getCurrentSession().createQuery("from insonetUser").list();
+		return getCurrentSession().createQuery("from User").list();
 	}
 
 }

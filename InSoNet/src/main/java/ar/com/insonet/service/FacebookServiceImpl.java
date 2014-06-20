@@ -65,7 +65,8 @@ public class FacebookServiceImpl implements Serializable {
 
 		Facebook facebook = (Facebook) request.getSession().getAttribute("facebook");
 		if (facebook != null) {
-			facebook.shutdown();			
+			facebook.shutdown();
+			
 		}
 		facebook = new FacebookFactory().getInstance();
 		
@@ -125,7 +126,8 @@ public class FacebookServiceImpl implements Serializable {
 			//List<SocialNetwork> list =  new ArrayList<SocialNetwork>();
 			list.add(socialNetwork);
 			insonetUser.setSocialNetwork(list);
-			insonetUserDAO.updateInsonetUser(insonetUser);
+			insonetUserDAO.addSocialNetwork(insonetUser);
+			//insonetUserDAO.updateInsonetUser(insonetUser);
 			//socialNetworkDAO.addSocialNetwork(socialNetwork);
 			
 			//tx.commit();
@@ -154,15 +156,15 @@ public class FacebookServiceImpl implements Serializable {
 		} catch (Exception e) {
 			throw new ServletException(e);
 		}
-		request.getSession().invalidate();
+		//request.getSession().invalidate();
 
 		// Log Out of the Facebook
 		StringBuffer next = request.getRequestURL();
 		int index = next.lastIndexOf("/");
-		next.replace(index + 1, next.length(), "");
+		next.replace(index + 1, next.length(), "");//por ahora solo se llama desde /addnet
 		//response.sendRedirect("http://www.facebook.com/logout.php?next="	+ next.toString() + "&access_token=" + accessToken);
 	
-		return "http://www.facebook.com/logout.php?next="	+ next.toString() + "&access_token=" + accessToken;
+		return "http://www.facebook.com/logout.php?next="	+ "http://localhost:8080/InSoNet/addnet" + "&access_token=" + accessToken;
 	}
 	
 	public String post(HttpServletRequest request, HttpServletResponse response) throws Exception {

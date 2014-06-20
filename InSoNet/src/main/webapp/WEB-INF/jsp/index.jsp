@@ -51,7 +51,7 @@
                 <div class="checkbox-block input-sm">
                     <label>Publicar en:</label>
                     <label>
-                        <input type="checkbox" value="Facebook" title="Publicar en Facebook" <c:if test="${domainUser.getSocialNetwork().isEmpty()}">disabled</c:if>/>
+                        <input type="checkbox" value="Facebook" title="Publicar en Facebook" <c:if test="${domainUser.getSocialNetwork().isEmpty()}">disabled</c:if> />
                         Facebook
                     </label>
                     <label>

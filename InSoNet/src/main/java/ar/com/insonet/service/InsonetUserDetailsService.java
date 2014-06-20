@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ar.com.insonet.dao.UserDAO;
 
 @Service
-@Transactional(readOnly=true)
+//@Transactional(readOnly=true)
 public class InsonetUserDetailsService implements UserDetailsService {
 
 	@Autowired

@@ -1,7 +1,11 @@
 package ar.com.insonet.controller.home;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +34,11 @@ import ar.com.insonet.dao.HibernateUtil;
 import ar.com.insonet.dao.InsonetUserDAO;
 import ar.com.insonet.dao.InsonetUserValidator;
 import ar.com.insonet.dao.UserDAO;
+import ar.com.insonet.model.AccessToken;
 import ar.com.insonet.model.InsonetUser;
 import ar.com.insonet.model.Role;
 import ar.com.insonet.model.User;
+import ar.com.insonet.model.SocialNetwork;
 import ar.com.insonet.service.FacebookServiceImpl;
 import ar.com.insonet.service.SendMailService;
 
@@ -71,7 +77,7 @@ public class HomeController {
 	@RequestMapping(value={"/", "/index"}, method=RequestMethod.GET)
     public String defaultHandler(HttpServletRequest request, Model model) {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		User domainUser;
+		InsonetUser domainUser;
 		UserDetails userDetails = null;
 		if (auth.getPrincipal() instanceof UserDetails) {
 			//user = ((UserDetails)auth.getPrincipal()).getUsername();
@@ -89,8 +95,11 @@ public class HomeController {
 			facebook = new FacebookFactory().getInstance();
 			request.getSession().setAttribute("facebook", facebook);
 		}
-		domainUser = userDAO.getUserByUsername(userDetails.getUsername());
+		domainUser = insonetUserDAO.getInsonetUserByUsername(userDetails.getUsername());
 		model.addAttribute("user", userDetails);
+		/*List<SocialNetwork> list = new ArrayList<SocialNetwork>();
+		list = domainUser.getSocialNetwork();
+		domainUser.setSocialNetwork(list);*/
 		model.addAttribute("domainUser", domainUser);
 		//model.addAttribute("fb", facebookService);
 		//request.getSession().setAttribute("principal", userDetails);
@@ -206,7 +215,7 @@ public class HomeController {
     }
     
     @RequestMapping(value="/addnet", method = RequestMethod.GET)
-    public String addSocialNetwork(HttpServletRequest request, Model model) {
+    public String addSocialNetwork(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
     	//TODO Implementar programacion orientada a aspectos
     	Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		User domainUser = null;
@@ -221,6 +230,14 @@ public class HomeController {
 		if (facebook == null) {
 			facebook = new FacebookFactory().getInstance();
 			request.getSession().setAttribute("facebook", facebook);
+		} 
+		//AccessToken de Facebook
+		//TODO cuando se trabaje con Twitter ver de cambiar nombre o no
+		AccessToken accessToken = (AccessToken) request.getSession().getAttribute("accessToken");
+		if (accessToken != null) {
+			//request.getSession().setAttribute("facebook", null);
+			String urlTarget = facebookService.logout(request, response);
+			return "redirect:" + urlTarget;
 		}
 		domainUser = userDAO.getUserByUsername(userDetails.getUsername());
 		//model.addAttribute("user", userDetails);
@@ -232,5 +249,25 @@ public class HomeController {
     	
     	return "/addnet";
     }
+    
+    /*public void logoutFacebook(HttpServletRequest request) {
+    	Facebook facebook = (Facebook) request.getSession()..getAttribute("facebook");
+		String accessToken = "";
+		
+		try {
+			accessToken = facebook.getOAuthAccessToken().getToken();
+		} catch (Exception e) {
+			throw new ServletException(e);
+		}
+		request.getSession().invalidate();
+
+		// Log Out of the Facebook
+		StringBuffer next = request.getRequestURL();
+		int index = next.lastIndexOf("/");
+		next.replace(index + 1, next.length(), "");
+		//response.sendRedirect("http://www.facebook.com/logout.php?next="	+ next.toString() + "&access_token=" + accessToken);
+	
+		return "http://www.facebook.com/logout.php?next="	+ next.toString() + "&access_token=" + accessToken;
+    }*/
 
 }
