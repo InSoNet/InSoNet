@@ -15,7 +15,7 @@
     
     <error-page>
         <exception-type>facebook4j.FacebookException</exception-type>
-        <location>/error.jsp</location>
+        <location>/error</location>
     </error-page>
     <servlet>
         <servlet-name>mvc-dispatcher</servlet-name>

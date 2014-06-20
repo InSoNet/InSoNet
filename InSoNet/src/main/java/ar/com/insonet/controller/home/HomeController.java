@@ -90,6 +90,7 @@ public class HomeController {
 		//Si llego aca es porque se logueo correctamente
 		//TODO: Obtener la redes sociales que tiene agregadas el usuario
 		//TODO: Primero verificar si por Lazy Spring las carga por defecto al llamar a getSocialNetwork
+		//Necesario para obtener los posts
 		Facebook facebook = (Facebook) request.getSession().getAttribute("facebook");
 		if (facebook == null) {
 			facebook = new FacebookFactory().getInstance();

@@ -1,6 +1,7 @@
 package ar.com.insonet.dao;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Session;
@@ -9,6 +10,7 @@ import org.hibernate.Transaction;
 import org.springframework.stereotype.Repository;
 
 import ar.com.insonet.model.InsonetUser;
+import ar.com.insonet.model.SocialNetwork;
 import ar.com.insonet.model.User;
 
 @Repository
@@ -50,9 +52,27 @@ public class InsonetUserDAOImpl implements InsonetUserDAO, Serializable {
 		Transaction tx = getCurrentSession().beginTransaction();
 		if (getCurrentSession().isConnected())
 			insonetUserToUpdate.setSocialNetwork(insonetUser.getSocialNetwork());
-		
-		getCurrentSession().update(insonetUserToUpdate);
 		getCurrentSession().flush();
+		getCurrentSession().update(insonetUserToUpdate);
+		
+		tx.commit();
+	}
+	public void delSocialNetwork(InsonetUser insonetUser, int idnet) {
+		InsonetUser insonetUserToUpdate = getInsonetUser(insonetUser.getId());
+		List<SocialNetwork> aux = new ArrayList<SocialNetwork>();
+		List<SocialNetwork> list = insonetUser.getSocialNetwork();
+		for(SocialNetwork sn : list) {
+			if(sn.getId() != idnet) {
+				aux.add(sn);
+			}
+		}
+		
+		Transaction tx = getCurrentSession().beginTransaction();
+		if (getCurrentSession().isConnected())
+			insonetUserToUpdate.setSocialNetwork(aux);
+		getCurrentSession().flush();
+		getCurrentSession().update(insonetUserToUpdate);
+		
 		tx.commit();
 	}
 	public InsonetUser getInsonetUser(int id) {

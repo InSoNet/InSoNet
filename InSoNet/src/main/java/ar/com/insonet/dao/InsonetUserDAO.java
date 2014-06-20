@@ -13,5 +13,6 @@ public interface InsonetUserDAO {
 	public void deleteInsonetUser(int id);
 	public List<InsonetUser> getInsonetUsers();
 	public void addSocialNetwork(InsonetUser insonetUser);
+	public void delSocialNetwork(InsonetUser insonetUser, int idnet);
 
 }

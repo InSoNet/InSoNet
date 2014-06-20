@@ -1,5 +1,6 @@
 package ar.com.insonet.service;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,10 +12,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -35,6 +38,7 @@ import facebook4j.FacebookFactory;
 import facebook4j.Friend;
 import facebook4j.Post;
 import facebook4j.ResponseList;
+import facebook4j.auth.Authorization;
 
 @Service
 public class FacebookServiceImpl implements Serializable {
@@ -63,12 +67,11 @@ public class FacebookServiceImpl implements Serializable {
 	
 	public String signin(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-		Facebook facebook = (Facebook) request.getSession().getAttribute("facebook");
+		/*Facebook facebook = (Facebook) request.getSession().getAttribute("facebook");
 		if (facebook != null) {
 			facebook.shutdown();
-			
-		}
-		facebook = new FacebookFactory().getInstance();
+		}*/
+		Facebook facebook = new FacebookFactory().getInstance();
 		
 		request.getSession().setAttribute("facebook", facebook);
 		
@@ -122,6 +125,7 @@ public class FacebookServiceImpl implements Serializable {
 			//ar.com.insonet.model.User domainUser = userDAO.getUserByUsername(loggedUsername);
 			//insonetUser.setRole(domainUser.getRole());
 			//Transaction tx = session.beginTransaction();
+			socialNetworkDAO.addSocialNetwork(socialNetwork);
 			List<SocialNetwork> list = insonetUser.getSocialNetwork();
 			//List<SocialNetwork> list =  new ArrayList<SocialNetwork>();
 			list.add(socialNetwork);
@@ -150,9 +154,11 @@ public class FacebookServiceImpl implements Serializable {
 	public String logout(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		Facebook facebook = (Facebook) request.getSession().getAttribute("facebook");
 		String accessToken = "";
+		AccessToken accessTokenDB = (AccessToken) request.getSession().getAttribute("accessToken");
 		
+		request.getSession().setAttribute("accessToken", null);
 		try {
-			accessToken = facebook.getOAuthAccessToken().getToken();
+			accessToken = accessTokenDB.getAccessToken();//facebook.getOAuthAccessToken().getToken();
 		} catch (Exception e) {
 			throw new ServletException(e);
 		}
@@ -163,7 +169,7 @@ public class FacebookServiceImpl implements Serializable {
 		int index = next.lastIndexOf("/");
 		next.replace(index + 1, next.length(), "");//por ahora solo se llama desde /addnet
 		//response.sendRedirect("http://www.facebook.com/logout.php?next="	+ next.toString() + "&access_token=" + accessToken);
-	
+		//return "https:/graph.facebook.com/" + facebook.getMe().getId() + "/permissions?next=" + next.toString() + "&method=delete&access_token=" +;
 		return "http://www.facebook.com/logout.php?next="	+ "http://localhost:8080/InSoNet/addnet" + "&access_token=" + accessToken;
 	}
 	
@@ -181,7 +187,7 @@ public class FacebookServiceImpl implements Serializable {
 	}
 	
 	public ResponseList<Post> getPosts(int idfb) throws Exception {
-		ResponseList<Post> postsList;
+		ResponseList<Post> postsList = null;
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		request.setCharacterEncoding("UTF-8");
 
@@ -190,9 +196,24 @@ public class FacebookServiceImpl implements Serializable {
 		facebook4j.auth.AccessToken accesstoken = new facebook4j.auth.AccessToken(accesstokenDB.getAccessToken());
 		try {
 			facebook.setOAuthAccessToken(accesstoken);
-			postsList = facebook.getPosts();			
+			postsList = facebook.getPosts();
 		} catch (FacebookException e) {
-			throw new ServletException(e);
+			int subcode = e.getErrorSubcode();
+			if(subcode == 458) {
+				//El usuario borro la app de entre sus aplicaciones. Debe loguearse otra vez.
+				UserDetails userDetails = (UserDetails)request.getSession().getAttribute("principal");
+				if(userDetails == null) {
+					Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+					userDetails = (UserDetails) auth.getPrincipal();
+					request.getSession().setAttribute("principal", userDetails);
+				}
+				String loggedUsername = userDetails.getUsername();
+				InsonetUser insonetUser = insonetUserDAO.getInsonetUserByUsername(loggedUsername);
+				//quitamos la red del usuario actual
+				insonetUserDAO.delSocialNetwork(insonetUser, idfb);
+			}
+			//throw new ServletException("El Usuario ha desautorizado su aplicación", e);
+			
 		}
 		
 		return postsList;
@@ -248,4 +269,10 @@ public class FacebookServiceImpl implements Serializable {
 		return postsList;
 	}
 	
+	@ExceptionHandler(FacebookException.class)
+	public ResponseList<Post> handleIOException(FacebookException ex) {
+	ResponseList<Post> listposts = null;
+	
+	return listposts;
+	}
 }

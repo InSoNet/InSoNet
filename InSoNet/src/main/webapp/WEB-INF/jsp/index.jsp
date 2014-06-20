@@ -146,13 +146,14 @@
     <%for(SocialNetwork n : nets) {%>
         <div class="col-lg-6">        
         <%ResponseList<Post> posts = fb.getPosts(n.getId()); %>
+        <%if(posts != null) {%>
         <% for(Post p : posts) { %>
             <div class="media">
                 <a class="pull-left" href="#">
                     <img class="media-object" src="holder.js/64x64" alt="Foto de perfil de <%=n.getUsernameSocial()%>" class="img-thumbnail" style="width:64px; height:64px;">
                 </a>
             <% if (p.getMessage() != null) {%>
-                <%=domainUser.getSocialNetwork().get(0).getUsernameSocial() + " " + p.getCreatedTime() + " " + p.getMessage() %>
+                <%=n.getUsernameSocial() + " " + p.getCreatedTime() + " " + p.getMessage() %>
             <% }%>
             <% URL url = p.getPicture();%>
             <% if (url != null) { %>
@@ -160,6 +161,7 @@
             <% }%>
             </div>
         <% }%>
+        <%} %>
         </div>
     <%}%>    
     </div>

@@ -53,7 +53,7 @@ public class SocialNetworkDAOImpl implements SocialNetworkDAO, Serializable {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<SocialNetwork> getSocialNetworks() {
-		return getCurrentSession().createQuery("from socialnetwork").list();
+		return getCurrentSession().createQuery("from socialNetwork").list();
 	}
 	
 	

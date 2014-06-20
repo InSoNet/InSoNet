@@ -103,7 +103,7 @@ public class InsonetUser extends User {
 	public void setPersonalConfiguration(Configuration configuration) {
 		this.personalConfiguration.add(configuration);
 	}*/
-	//@OneToMany
+	
 	public List<SocialNetwork> getSocialNetwork() {
 		//List<SocialNetwork> list = new ArrayList<SocialNetwork>(this.socialNetwork);
 		return this.socialNetwork;
