@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import ar.com.insonet.service.FacebookServiceImpl;
@@ -52,10 +53,12 @@ public class SigninController {
         return "redirect:" + urlTarget;
 	}
 	
-	@RequestMapping(value="/facebook/callback", params="code")
-	public String callbackHandler(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	@RequestMapping(value="/facebook/callback")
+	public String callbackHandler(@RequestParam(value = "error", required = false) String error,
+			@RequestParam(value = "error_code", required = false) String error_code,
+	  		@RequestParam(value = "code", required = false) String code) throws Exception {
 		        
-        String urlTarget = fbService.callback(request, response);
+        String urlTarget = fbService.callback(code, error, error_code);
         
         return "redirect:" + urlTarget;
 	}

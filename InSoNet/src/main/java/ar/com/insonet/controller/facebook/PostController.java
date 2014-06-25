@@ -1,12 +1,14 @@
 package ar.com.insonet.controller.facebook;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import ar.com.insonet.service.FacebookServiceImpl;
 
@@ -29,11 +31,14 @@ public class PostController {
 		
 		return "/post";
 	}*/
-	/*@RequestMapping(value="/facebook/{fb}/post/", method=RequestMethod.POST)
-	public String publishing(int fb, String message, HttpServletRequest request) {
-		String idpost = fbService().addPost(message);
-		return idpost;
-	}*/
+	@RequestMapping(value="/facebook/post/add", params="messageTxt", method=RequestMethod.GET)
+	public @ResponseBody String publishing(String messageTxt) throws Exception {
+		String result = "nok";
+		if(messageTxt != "") {
+		    result = fbService.addPost(messageTxt);
+		}
+		return result;
+	}
 	
 	@RequestMapping(value="/facebook/{fb}/post/{id}", method=RequestMethod.GET)
 	public Post show(int fb, String id, HttpServletRequest request) throws FacebookException {

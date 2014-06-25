@@ -82,64 +82,69 @@ public class FacebookServiceImpl implements Serializable {
 		return facebook.getOAuthAuthorizationURL(callbackURL.toString());
 	}
 	
-	public String callback(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public String callback(String code, String error, String error_code) throws Exception {
 		
-		facebook4j.auth.AccessToken fbToken = null; 
+		facebook4j.auth.AccessToken fbToken = null;
+		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		Facebook facebook = (Facebook) request.getSession().getAttribute("facebook");
-		String oauthCode = request.getParameter("code");
-		try {
-			fbToken = facebook.getOAuthAccessToken(oauthCode);
-			String usernameSocial = facebook.getMe().getUsername();
-			if(usernameSocial == null) {
-				usernameSocial=facebook.getMe().getName();
+		if(error == null && error_code == null) {
+			String oauthCode = code;
+			try {
+				fbToken = facebook.getOAuthAccessToken(oauthCode);
+				String usernameSocial = facebook.getMe().getUsername();
+				if(usernameSocial == null) {
+					usernameSocial=facebook.getMe().getName();
+				}
+				//TODO: solo agregar la red social si es nueva.
+				//TODO: por aca solo pasa si es nueva.
+				accessToken.setExpire(fbToken.getExpires());
+				accessToken.setAccessToken(fbToken.getToken());
+				//if (facebook.getAuthorization().isEnabled()) {
+				//	accessToken.setLoginStatus(LoginStatus.CONNECTED.toString());
+				//} else {
+					accessToken.setLoginStatus("connected");
+		        //}
+				socialNetwork.setAccessToken(accessToken);
+				
+				//SocialNetworkType socialNetworkType = (SocialNetworkType) session.get(SocialNetworkType.class, new Integer(1));
+				//1=facebook,2=twitter
+				SocialNetworkType socialNetworkType = socialNetworkTypeDAO.getSocialNetworkType(1);
+				socialNetwork.setSocialNetworkType(socialNetworkType);
+				
+				socialNetwork.setUsernameSocial(usernameSocial);
+				//Habilitar uno de los dos para guardar socialNetwork 
+				//session.save(socialNetwork);
+				//socialNetworkDAO.addSocialNetwork(socialNetwork);
+				UserDetails userDetails = (UserDetails)request.getSession().getAttribute("principal");
+				if(userDetails == null) {
+					Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+					userDetails = (UserDetails) auth.getPrincipal();
+					request.getSession().setAttribute("principal", userDetails);
+				}
+				String loggedUsername = userDetails.getUsername();
+				InsonetUser insonetUser = insonetUserDAO.getInsonetUserByUsername(loggedUsername);
+				//lo carga por Lazy, probar!
+				//ar.com.insonet.model.User domainUser = userDAO.getUserByUsername(loggedUsername);
+				//insonetUser.setRole(domainUser.getRole());
+				//Transaction tx = session.beginTransaction();
+				socialNetworkDAO.addSocialNetwork(socialNetwork);
+				List<SocialNetwork> list = insonetUser.getSocialNetwork();
+				//List<SocialNetwork> list =  new ArrayList<SocialNetwork>();
+				list.add(socialNetwork);
+				insonetUser.setSocialNetwork(list);
+				insonetUserDAO.addSocialNetwork(insonetUser);
+				//insonetUserDAO.updateInsonetUser(insonetUser);
+				//socialNetworkDAO.addSocialNetwork(socialNetwork);
+				
+				//tx.commit();
+				
+				request.getSession().setAttribute("accessToken", accessToken);
+				
+			} catch (FacebookException e) {
+				throw new ServletException(e);
 			}
-			//TODO: solo agregar la red social si es nueva.
-			//TODO: por aca solo pasa si es nueva.
-			accessToken.setExpire(fbToken.getExpires());
-			accessToken.setAccessToken(fbToken.getToken());
-			//if (facebook.getAuthorization().isEnabled()) {
-			//	accessToken.setLoginStatus(LoginStatus.CONNECTED.toString());
-			//} else {
-				accessToken.setLoginStatus("connected");
-	        //}
-			socialNetwork.setAccessToken(accessToken);
-			
-			//SocialNetworkType socialNetworkType = (SocialNetworkType) session.get(SocialNetworkType.class, new Integer(1));
-			//1=facebook,2=twitter
-			SocialNetworkType socialNetworkType = socialNetworkTypeDAO.getSocialNetworkType(1);
-			socialNetwork.setSocialNetworkType(socialNetworkType);
-			
-			socialNetwork.setUsernameSocial(usernameSocial);
-			//Habilitar uno de los dos para guardar socialNetwork 
-			//session.save(socialNetwork);
-			//socialNetworkDAO.addSocialNetwork(socialNetwork);
-			UserDetails userDetails = (UserDetails)request.getSession().getAttribute("principal");
-			if(userDetails == null) {
-				Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-				userDetails = (UserDetails) auth.getPrincipal();
-				request.getSession().setAttribute("principal", userDetails);
-			}
-			String loggedUsername = userDetails.getUsername();
-			InsonetUser insonetUser = insonetUserDAO.getInsonetUserByUsername(loggedUsername);
-			//lo carga por Lazy, probar!
-			//ar.com.insonet.model.User domainUser = userDAO.getUserByUsername(loggedUsername);
-			//insonetUser.setRole(domainUser.getRole());
-			//Transaction tx = session.beginTransaction();
-			socialNetworkDAO.addSocialNetwork(socialNetwork);
-			List<SocialNetwork> list = insonetUser.getSocialNetwork();
-			//List<SocialNetwork> list =  new ArrayList<SocialNetwork>();
-			list.add(socialNetwork);
-			insonetUser.setSocialNetwork(list);
-			insonetUserDAO.addSocialNetwork(insonetUser);
-			//insonetUserDAO.updateInsonetUser(insonetUser);
-			//socialNetworkDAO.addSocialNetwork(socialNetwork);
-			
-			//tx.commit();
-			
-			request.getSession().setAttribute("accessToken", accessToken);
-			
-		} catch (FacebookException e) {
-			throw new ServletException(e);
+		} else {
+			//TODO log de no aceptar agregar red social.
 		}
 		
 		//TODO: to convert short-lived token to long-lived token
@@ -184,6 +189,40 @@ public class FacebookServiceImpl implements Serializable {
 		}
 				
 		return "/facebook/posts?list";
+	}
+	
+	public String addPost(String message) throws Exception {
+		String result = "nok";
+		String idPost;
+		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
+		request.setCharacterEncoding("UTF-8");
+		Facebook facebook = (Facebook) request.getSession().getAttribute("facebook");
+		//InsonetUser insonetUser = (InsonetUser) request.getSession().getAttribute("domainUser");
+		UserDetails userDetails = (UserDetails)request.getSession().getAttribute("principal");
+		if(userDetails == null) {
+			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+			userDetails = (UserDetails) auth.getPrincipal();
+			request.getSession().setAttribute("principal", userDetails);
+		}
+		String loggedUsername = userDetails.getUsername();
+		InsonetUser insonetUser = insonetUserDAO.getInsonetUserByUsername(loggedUsername);
+		List<SocialNetwork> list = insonetUser.getSocialNetwork();
+		try {
+			for(SocialNetwork sn : list) {
+				if(sn.getSocialNetworkType().getId() == 1) {
+					AccessToken accesstokenDB = sn.getAccessToken();
+					facebook4j.auth.AccessToken accesstoken = new facebook4j.auth.AccessToken(accesstokenDB.getAccessToken());
+					facebook.setOAuthAccessToken(accesstoken);
+					idPost = facebook.posts().postStatusMessage(message);
+					result = "ok";	
+				}
+			}
+			
+		} catch (FacebookException e) {
+			throw new ServletException(e);
+		}
+				
+		return result;
 	}
 	
 	public ResponseList<Post> getPosts(int idfb) throws Exception {

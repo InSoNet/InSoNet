@@ -7,10 +7,10 @@
 <%@ page import="facebook4j.Facebook" %>
 <%@ page import="facebook4j.Post" %>
 <%@ page import="facebook4j.ResponseList" %>
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<!doctype html">
+<!DOCTYPE html">
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -21,6 +21,7 @@
 <script src="<c:url value='/resources/js/holder.js' />"></script>
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <script src="<c:url value='/resources/js/jquery.js'/>"></script>
+<script src="<c:url value='/resources/js/jquery.validate.js'/>"></script>
 <script src="<c:url value='/resources/js/insonetCore.js'/>" type="text/javascript"></script>
 <!-- conditional comments -->
 <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -40,29 +41,33 @@
   <c:when test="${domainUser.isEnabled() == true}">
         <nav class="navbar navbar-default" role="navigation">
             <div class="col-lg-6">
-                <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Escribir mensaje...">
+                <form  role="form" id="formMessage">
+                <div class="input-group">                    
+                    <input name="messageTxt" id="messageTxt" type="text" class="form-control" placeholder="Escribir mensaje..." required/>
                     <div class="input-group-btn">
                         <button type="button" class="btn btn-default" name="privacidad" title="Privacidad de mensaje"><span class="glyphicon glyphicon-lock"></span></button>
                         <button class="btn btn-default" type="button" title="Adjuntar foto">Adjuntar Foto</button>
-                        
+                        <button type="submit" id="publishingButton" class="btn btn-default" title="Publicar mensaje" lang="es">Enviar</button>
                     </div>
                 </div>
+                <div id="noticeMessage" class=""></div>
+                <label for="messageTxt" class="error hidden" style="display:none important;">Escriba un mensaje</label>
                 <div class="checkbox-block input-sm">
                     <label>Publicar en:</label>
                     <label>
-                        <input type="checkbox" value="Facebook" title="Publicar en Facebook" <c:if test="${domainUser.getSocialNetwork().isEmpty()}">disabled</c:if> />
+                        <input name="publishingIn" type="checkbox" value="Facebook" title="Publicar en Facebook" <c:if test="${domainUser.getSocialNetwork().isEmpty()}">disabled</c:if> />
                         Facebook
                     </label>
                     <label>
-                        <input type="checkbox" value="Twitter" title="Publicar en Twitter" <c:if test="${domainUser.getSocialNetwork().isEmpty()}">disabled</c:if>>
+                        <input name="publishingIn" type="checkbox" value="Twitter" title="Publicar en Twitter" <c:if test="${domainUser.getSocialNetwork().isEmpty()}">disabled</c:if>>
                         Twitter
                     </label>
                     <label>
-                        <input type="checkbox" value="Todos" title="Publicar en todos" <c:if test="${domainUser.getSocialNetwork().isEmpty()}">disabled</c:if>>
+                        <input name="publishingIn" type="checkbox" value="Todos" title="Publicar en todos" <c:if test="${domainUser.getSocialNetwork().isEmpty()}">disabled</c:if>>
                         Todos
                     </label>
                 </div>
+                </form>
                 <div>
                     <button type="button" class="btn btn-default btn-xs <c:if test="${domainUser.getSocialNetwork().isEmpty()}">disabled</c:if>" title="Agregar Columna">
                       <span class="glyphicon glyphicon-plus"></span> Agregar Columna
@@ -77,7 +82,7 @@
                 <div>
                     <form  style="margin-top:0px;padding-left:0px;" role="search">
                         <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Buscar Personas, Páginas, etc.">
+                            <input type="text" class="form-control" placeholder="Buscar Personas, PÃ¡ginas, etc.">
                              <div class="input-group-btn">
                                 <button type="submit" class="btn btn-default" title="Buscar" onclick='location.href="resultadoDeBusqueda.html"; return false;'>Buscar</button>
                             </div>
@@ -100,7 +105,7 @@
                         <button type="button" class="btn" name="notificaciones" title="Notificaciones">
                            <span class="glyphicon glyphicon-globe"></span>
                         </button>
-                        <button type="button" class="btn-sm btn-default pull-right" onclick="location.href='<c:url value="/j_spring_security_logout" />';" name="logout" title="Cerrar sesión">
+                        <button type="button" class="btn-sm btn-default pull-right" onclick="location.href='<c:url value="/j_spring_security_logout" />';" name="logout" title="Cerrar sesiÃ³n">
                             <span class="glyphicon glyphicon-off"></span>
                         </button>
                         
@@ -108,6 +113,9 @@
                 </div>                
             </div>
         </nav>
+        <audio id="noticeAudio">
+            <source src="<c:url value='/resources/audio/no-se-pudo-publicar-mensaje.wma'/>" type="audio/wmv">
+        </audio>
     </c:when>
     <c:when test="${domainUser.isEnabled() == false}">
         <nav class="navbar navbar-default" role="navigation">
@@ -120,7 +128,7 @@
                        <span class="glyphicon glyphicon-user"></span>
                     </button>
                     
-                    <button type="button" class="btn-sm btn-default pull-right" onclick="location.href='<c:url value="/j_spring_security_logout" />';" name="logout" title="Cerrar sesión">
+                    <button type="button" class="btn-sm btn-default pull-right" onclick="location.href='<c:url value="/j_spring_security_logout" />';" name="logout" title="Cerrar sesiÃ³n">
                         <span class="glyphicon glyphicon-off"></span>
                     </button>
                 </div>
@@ -149,21 +157,21 @@
         <%if(posts != null) {%>
         <% for(Post p : posts) { %>
             <div class="media">
+            <% if (p.getMessage() != null) {%>
                 <a class="pull-left" href="#">
                     <img class="media-object" src="holder.js/64x64" alt="Foto de perfil de <%=n.getUsernameSocial()%>" class="img-thumbnail" style="width:64px; height:64px;">
                 </a>
-            <% if (p.getMessage() != null) {%>
                 <%=n.getUsernameSocial() + " " + p.getCreatedTime() + " " + p.getMessage() %>
             <% }%>
             <% URL url = p.getPicture();%>
-            <% if (url != null) { %>
+            <% if (url != null) {%>
                 <img class="media-object" src="<%=url.toString()%>" alt="Foto que publico <%=n.getUsernameSocial() %>" class="img-thumbnail" style="width:140px; height:180px;">
             <% }%>
             </div>
         <% }%>
         <%} %>
         </div>
-    <%}%>    
+    <%}%>
     </div>
 <% }%>
 </div>
