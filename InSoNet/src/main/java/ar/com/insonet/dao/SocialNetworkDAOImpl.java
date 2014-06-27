@@ -17,24 +17,27 @@ public class SocialNetworkDAOImpl implements SocialNetworkDAO, Serializable {
 		return HibernateUtil.getSessionFactory().getCurrentSession();
 	}
 	
-	@Override
+	
 	public void addSocialNetwork(SocialNetwork socialNetwork) {
 		Transaction tx = getCurrentSession().beginTransaction();
 		getCurrentSession().save(socialNetwork);
 		tx.commit();
 	}
 
-	@Override
+	
 	public void updateSocialNetwork(SocialNetwork socialNetwork) {
 		SocialNetwork socialNetworkToUpdate = getSocialNetwork(socialNetwork.getId());
 		socialNetworkToUpdate.setAccessToken(socialNetwork.getAccessToken());
 		socialNetworkToUpdate.setUsernameSocial(socialNetwork.getUsernameSocial());
 		socialNetworkToUpdate.setSocialNetworkType(socialNetwork.getSocialNetworkType());
+		socialNetworkToUpdate.setVisible(socialNetwork.isVisible());
+		Transaction tx = getCurrentSession().beginTransaction();
 		getCurrentSession().update(socialNetworkToUpdate);
+		tx.commit();
 		
 	}
 
-	@Override
+	
 	public SocialNetwork getSocialNetwork(int id) {
 		Transaction tx = getCurrentSession().beginTransaction();
 		SocialNetwork socialNetwork = (SocialNetwork) getCurrentSession().get(SocialNetwork.class, id);
@@ -42,7 +45,7 @@ public class SocialNetworkDAOImpl implements SocialNetworkDAO, Serializable {
 		return socialNetwork;
 	}
 
-	@Override
+	
 	public void deleteSocialNetwork(int id) {
 		SocialNetwork socialNetwork = getSocialNetwork(id);
 		if(socialNetwork != null) {
@@ -53,7 +56,6 @@ public class SocialNetworkDAOImpl implements SocialNetworkDAO, Serializable {
 	}
 
 	@SuppressWarnings("unchecked")
-	@Override
 	public List<SocialNetwork> getSocialNetworks() {
 		return getCurrentSession().createQuery("from socialNetwork").list();
 	}

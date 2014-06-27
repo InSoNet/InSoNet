@@ -69,7 +69,7 @@
                 </div>
                 </form>
                 <div>
-                    <button type="button" class="btn btn-default btn-xs <c:if test="${domainUser.getSocialNetwork().isEmpty()}">disabled</c:if>" title="Agregar Columna">
+                    <button type="button" onclick="location.href='${pageContext.request.contextPath}/addcolumn';" class="btn btn-default btn-xs <c:if test="${domainUser.getSocialNetwork().isEmpty()}">disabled</c:if>" title="Agregar Columna">
                       <span class="glyphicon glyphicon-plus"></span> Agregar Columna
                     </button>
                     <button type="button" onclick="location.href='${pageContext.request.contextPath}/addnet';" class="btn btn-default btn-xs" title="Agregar red social">
@@ -152,7 +152,9 @@
 <% if (nets.size() > 0) {%>
     <div class="row">    
     <%for(SocialNetwork n : nets) {%>
-        <div class="col-lg-6">        
+        <%if(n.isVisible()==true) {%>
+        <div class="col-lg-6" id="columnSocial-<%=n.getId() %>">
+            <p class="text-center">Facebook - <%=n.getUsernameSocial()%><button type="button" id="columnSocial-<%=n.getId() %>-x" onclick="closeColumn(this.id)" class="close" aria-hidden="true" title="Cerrar columna">&times;</button></p>    
         <%ResponseList<Post> posts = fb.getPosts(n.getId()); %>
         <%if(posts != null) {%>
         <% for(Post p : posts) { %>
@@ -171,6 +173,7 @@
         <% }%>
         <%} %>
         </div>
+        <%} %>
     <%}%>
     </div>
 <% }%>

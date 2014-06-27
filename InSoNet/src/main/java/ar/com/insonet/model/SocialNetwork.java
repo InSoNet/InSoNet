@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import ar.com.insonet.model.SocialNetworkType;
@@ -31,7 +32,14 @@ public class SocialNetwork implements Serializable {
 	@NotNull
 	@OneToOne(cascade = CascadeType.ALL)
 	private AccessToken accessToken;
+	private boolean visible;
 	
+	public boolean isVisible() {
+		return visible;
+	}
+	public void setVisible(boolean visible) {
+		this.visible = visible;
+	}
 	public Integer getId() {
 		return id;
 	}

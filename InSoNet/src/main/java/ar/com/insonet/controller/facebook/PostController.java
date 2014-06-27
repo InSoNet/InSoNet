@@ -6,6 +6,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -41,7 +42,7 @@ public class PostController {
 	}
 	
 	@RequestMapping(value="/facebook/{fb}/post/{id}", method=RequestMethod.GET)
-	public Post show(int fb, String id, HttpServletRequest request) throws FacebookException {
+	public Post show(@PathVariable int fb, @PathVariable String id, HttpServletRequest request) throws FacebookException {
 		//ResponseList<Post> list = null;
 		//Obtenemos el post del facebook indicado
 		Post post = fbService.getPost(fb, id);
@@ -55,7 +56,7 @@ public class PostController {
 		return "redirect:/post/{id}";
 	}*/
 	@RequestMapping(value="/facebook/{fb}/list", method=RequestMethod.GET)
-	public ResponseList<Post> list(int fb) throws Exception {
+	public ResponseList<Post> list(@PathVariable int fb) throws Exception {
 		ResponseList<Post> posts = fbService.getPosts(fb);
 		
 		return posts;

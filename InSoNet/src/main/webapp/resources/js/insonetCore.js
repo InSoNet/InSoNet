@@ -16,6 +16,23 @@ function isKeyPressed(event) {
     }    
 }
 
+function closeColumn(idCol) {
+	var auxReal = idCol.split("-");
+	var idColReal = auxReal[0] + "-" + auxReal[1]
+	$.ajax({
+		type: "GET",
+		url: "http://localhost:8080/InSoNet/hidecol/" + auxReal[1],
+		success: function (result) {
+			if (result == "ok") {
+				$("#" + idColReal).hide();
+	        }
+	    },
+	    error: function (datosError) {
+	        console.log(datosError.responseText);
+	    }	
+	});	
+}
+
 function validatePass(p1, p2) {
     if (p1.value != p2.value || p1.value == '' || p2.value == '') {
         p2.setCustomValidity('Contraseña incorrecta');

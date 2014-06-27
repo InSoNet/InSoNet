@@ -110,8 +110,8 @@ public class FacebookServiceImpl implements Serializable {
 				//1=facebook,2=twitter
 				SocialNetworkType socialNetworkType = socialNetworkTypeDAO.getSocialNetworkType(1);
 				socialNetwork.setSocialNetworkType(socialNetworkType);
-				
 				socialNetwork.setUsernameSocial(usernameSocial);
+				socialNetwork.setVisible(true);
 				//Habilitar uno de los dos para guardar socialNetwork 
 				//session.save(socialNetwork);
 				//socialNetworkDAO.addSocialNetwork(socialNetwork);

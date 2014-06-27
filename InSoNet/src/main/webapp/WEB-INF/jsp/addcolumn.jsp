@@ -1,12 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ page import="java.util.List" %>
+<%@ page import="ar.com.insonet.model.SocialNetwork" %>
 <%@ page import="ar.com.insonet.model.InsonetUser" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!doctype html>
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Agregar Red Social</title>
+<title>Agregar Columna</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!-- Bootstrap -->
 <link href="<c:url value='/resources/css/bootstrap.min.css' />" rel="stylesheet" type="text/css">
@@ -121,14 +123,29 @@
     </c:when>
 </c:choose>
     </div>
+<%InsonetUser domainUser = (InsonetUser) request.getSession().getAttribute("domainUser");%>
+<%List<SocialNetwork> nets = domainUser.getSocialNetwork();%>
+<%int i = 1; %>
+<%if (nets.size() > 0) {%>
     <div class="row">
-        <p>
-            <a href="${pageContext.request.contextPath}/facebook/signin" class="btn btn-default btn-lg <c:if test="${domainUser.isEnabled() == false}">disabled</c:if>" role="button" id="addFacebook" title="Agregar una cuenta de Facebook">Agregar una cuenta de Facebook</a>
-        </p>
-        <p>
-            <a href="${pageContext.request.contextPath}/twitter" id="addTwitter" class="btn btn-primary btn-lg <c:if test="${domainUser.isEnabled() == false}">disabled</c:if>" title="Agregar una cuenta de Twitter" role="button">Agregar una cuenta de Twitter</a>
-        </p>
+        <form role="form" method="post">
+    <%for(SocialNetwork n : nets) {%>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" class="" name="socialNetworks" tabindex="<%=i %>" value="<%=n.getId()%>" <%if(i==1){ %>focus state<%} %> <%if(n.isVisible()){ %>checked disabled<%} %>><%=n.getSocialNetworkType().getSocialNetworkType() %> - <%=n.getUsernameSocial() %>
+                </label>
+            </div>
+        <%i = i + 1; %>
+    <%} %>
+            <button type="submit" class="btn btn-default" title="Agregar columnas" lang="es">Agregar columnas</button>
+        </form>
     </div>
+<script>
+$(document).ready(function(){
+  $("input[name='socialNetworks']:first").focus();
+});
+</script>
+<%} %>
 </div>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="<c:url value='/resources/js/bootstrap.min.js'/>"></script>
