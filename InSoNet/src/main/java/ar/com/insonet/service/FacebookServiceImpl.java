@@ -36,7 +36,9 @@ import facebook4j.Facebook;
 import facebook4j.FacebookException;
 import facebook4j.FacebookFactory;
 import facebook4j.Friend;
+import facebook4j.Notification;
 import facebook4j.Post;
+import facebook4j.Comment;
 import facebook4j.ResponseList;
 import facebook4j.auth.Authorization;
 
@@ -110,6 +112,8 @@ public class FacebookServiceImpl implements Serializable {
 				//1=facebook,2=twitter
 				SocialNetworkType socialNetworkType = socialNetworkTypeDAO.getSocialNetworkType(1);
 				socialNetwork.setSocialNetworkType(socialNetworkType);
+				String userSocialId = facebook.getMe().getId();
+				socialNetwork.setUserSocialId(userSocialId);
 				socialNetwork.setUsernameSocial(usernameSocial);
 				socialNetwork.setVisible(true);
 				//Habilitar uno de los dos para guardar socialNetwork 
@@ -225,6 +229,20 @@ public class FacebookServiceImpl implements Serializable {
 		return result;
 	}
 	
+	public List<SocialNetwork> getVisiblesSocialNetworks() {
+		List<SocialNetwork> aux = new ArrayList<SocialNetwork>();
+		
+		List<SocialNetwork> socialNetworks = socialNetworkDAO.getSocialNetworks();
+		if(socialNetworks != null) {
+			for(SocialNetwork sn : socialNetworks) {
+				if(sn.isVisible()) {
+					aux.add(sn);
+				}
+			}
+		}
+		return aux;
+	}
+	
 	public ResponseList<Post> getPosts(int idfb) throws Exception {
 		ResponseList<Post> postsList = null;
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
@@ -235,7 +253,7 @@ public class FacebookServiceImpl implements Serializable {
 		facebook4j.auth.AccessToken accesstoken = new facebook4j.auth.AccessToken(accesstokenDB.getAccessToken());
 		try {
 			facebook.setOAuthAccessToken(accesstoken);
-			postsList = facebook.getPosts();
+			postsList = facebook.posts().getFeed();//.getPosts();
 		} catch (FacebookException e) {
 			int subcode = e.getErrorSubcode();
 			if(subcode == 458) {
@@ -257,6 +275,89 @@ public class FacebookServiceImpl implements Serializable {
 		}
 		
 		return postsList;
+	}
+	
+	public ResponseList<Comment> getCommentsByPost(String idPost, int idfb) throws Exception {
+		ResponseList<Comment> commList = null;
+		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
+		//request.setCharacterEncoding("UTF-8");
+
+		Facebook facebook = (Facebook) request.getSession().getAttribute("facebook");
+		if(facebook == null) {
+			facebook = new FacebookFactory().getInstance();
+		}
+		AccessToken accesstokenDB = socialNetworkDAO.getSocialNetwork(idfb).getAccessToken();
+		facebook4j.auth.AccessToken accesstoken = new facebook4j.auth.AccessToken(accesstokenDB.getAccessToken());
+		try {
+			facebook.setOAuthAccessToken(accesstoken); 
+			commList = facebook.posts().getPostComments(idPost);
+		} catch (FacebookException e) {
+			int subcode = e.getErrorSubcode();
+			if(subcode == 458) {
+				//El usuario borro la app de entre sus aplicaciones. Debe loguearse otra vez.
+				UserDetails userDetails = (UserDetails)request.getSession().getAttribute("principal");
+				if(userDetails == null) {
+					Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+					userDetails = (UserDetails) auth.getPrincipal();
+					request.getSession().setAttribute("principal", userDetails);
+				}
+				String loggedUsername = userDetails.getUsername();
+				InsonetUser insonetUser = insonetUserDAO.getInsonetUserByUsername(loggedUsername);
+				//quitamos la red del usuario actual
+				insonetUserDAO.delSocialNetwork(insonetUser, idfb);
+				socialNetworkDAO.deleteSocialNetwork(idfb);
+			}
+			//throw new ServletException("El Usuario ha desautorizado su aplicación", e);
+			
+		}
+		
+		return commList;
+	}
+	
+	public ResponseList<Notification> getNotifications() {
+		
+		ResponseList<Notification> noti = null;
+		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
+		Facebook facebook = (Facebook) request.getSession().getAttribute("facebook");
+		if(facebook == null) {
+			facebook = new FacebookFactory().getInstance();
+		}
+		//Obtenemos los user_id de las redes visibles, y por cada uno sus noticias
+		List<SocialNetwork> socialNetworks = getVisiblesSocialNetworks();
+		int idfb = 0;
+		try {
+			if(socialNetworks != null) {
+				for(SocialNetwork sn : socialNetworks) {
+					ResponseList<Notification> aux = null;
+					idfb = sn.getId();
+					String user_id = sn.getUserSocialId();
+					AccessToken accesstokenDB = sn.getAccessToken();
+					facebook4j.auth.AccessToken accesstoken = new facebook4j.auth.AccessToken(accesstokenDB.getAccessToken());
+					facebook.setOAuthAccessToken(accesstoken);
+					aux = facebook.notifications().getNotifications(user_id);
+					noti.addAll(aux);
+					
+				}
+			}
+		} catch(FacebookException e) {
+			int subcode = e.getErrorSubcode();
+			if(subcode == 458) {
+				//El usuario borro la app de entre sus aplicaciones. Debe loguearse otra vez.
+				UserDetails userDetails = (UserDetails)request.getSession().getAttribute("principal");
+				if(userDetails == null) {
+					Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+					userDetails = (UserDetails) auth.getPrincipal();
+					request.getSession().setAttribute("principal", userDetails);
+				}
+				String loggedUsername = userDetails.getUsername();
+				InsonetUser insonetUser = insonetUserDAO.getInsonetUserByUsername(loggedUsername);
+				//quitamos la red del usuario actual
+				insonetUserDAO.delSocialNetwork(insonetUser, idfb);
+				socialNetworkDAO.deleteSocialNetwork(idfb);
+			}
+		}
+		
+		return noti;
 	}
 	
 	public Post getPost(int idfb, String idpost) throws FacebookException {
@@ -311,8 +412,8 @@ public class FacebookServiceImpl implements Serializable {
 	
 	@ExceptionHandler(FacebookException.class)
 	public ResponseList<Post> handleIOException(FacebookException ex) {
-	ResponseList<Post> listposts = null;
+		ResponseList<Post> listposts = null;
 	
-	return listposts;
+		return listposts;
 	}
 }

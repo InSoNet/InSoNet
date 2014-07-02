@@ -28,6 +28,7 @@ public class SocialNetworkDAOImpl implements SocialNetworkDAO, Serializable {
 	public void updateSocialNetwork(SocialNetwork socialNetwork) {
 		SocialNetwork socialNetworkToUpdate = getSocialNetwork(socialNetwork.getId());
 		socialNetworkToUpdate.setAccessToken(socialNetwork.getAccessToken());
+		socialNetworkToUpdate.setUserSocialId(socialNetwork.getUserSocialId());
 		socialNetworkToUpdate.setUsernameSocial(socialNetwork.getUsernameSocial());
 		socialNetworkToUpdate.setSocialNetworkType(socialNetwork.getSocialNetworkType());
 		socialNetworkToUpdate.setVisible(socialNetwork.isVisible());
@@ -57,7 +58,10 @@ public class SocialNetworkDAOImpl implements SocialNetworkDAO, Serializable {
 
 	@SuppressWarnings("unchecked")
 	public List<SocialNetwork> getSocialNetworks() {
-		return getCurrentSession().createQuery("from socialNetwork").list();
+		Transaction tx = getCurrentSession().beginTransaction();
+		List<SocialNetwork> list = getCurrentSession().createQuery("from SocialNetwork").list();
+		tx.commit();
+		return list;
 	}
 	
 	

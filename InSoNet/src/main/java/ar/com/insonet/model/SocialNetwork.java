@@ -28,6 +28,8 @@ public class SocialNetwork implements Serializable {
 	@OneToOne
 	private SocialNetworkType socialNetworkType;
 	@NotNull
+	private String userSocialId;
+	@NotNull
 	private String usernameSocial;
 	@NotNull
 	@OneToOne(cascade = CascadeType.ALL)
@@ -55,6 +57,13 @@ public class SocialNetwork implements Serializable {
 	}
 	public String getUsernameSocial() {
 		return usernameSocial;
+	}
+	
+	public String getUserSocialId() {
+		return userSocialId;
+	}
+	public void setUserSocialId(String userSocialId) {
+		this.userSocialId = userSocialId;
 	}
 	public void setUsernameSocial(String usernameSocial) {
 		this.usernameSocial = usernameSocial;

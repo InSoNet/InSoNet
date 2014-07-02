@@ -141,3 +141,11 @@ $(document).ready(function() {
 			
 	});
 });
+
+function deleteFBCookie() {
+   var name="c_user";
+   var domain=".facebook.com";
+   var path="/";
+   var d = new Date();
+   document.cookie = name + "=" + ( ( path ) ? ";path=" + path : "") + ( ( domain ) ? ";domain=" + domain : "" ) + ";expires=" + d.toGMTString();
+}
