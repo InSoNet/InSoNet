@@ -37,9 +37,11 @@ import facebook4j.FacebookException;
 import facebook4j.FacebookFactory;
 import facebook4j.Friend;
 import facebook4j.Notification;
+import facebook4j.Page;
 import facebook4j.Post;
 import facebook4j.Comment;
 import facebook4j.ResponseList;
+import facebook4j.User;
 import facebook4j.auth.Authorization;
 
 @Service
@@ -335,8 +337,11 @@ public class FacebookServiceImpl implements Serializable {
 					facebook4j.auth.AccessToken accesstoken = new facebook4j.auth.AccessToken(accesstokenDB.getAccessToken());
 					facebook.setOAuthAccessToken(accesstoken);
 					aux = facebook.notifications().getNotifications(user_id);
-					noti.addAll(aux);
-					
+					if(noti == null) {
+						noti = aux;
+					} else {
+						noti.addAll(aux);
+					}
 				}
 			}
 		} catch(FacebookException e) {
@@ -358,6 +363,76 @@ public class FacebookServiceImpl implements Serializable {
 		}
 		
 		return noti;
+	}
+	
+	public ResponseList<User> searchUsers(String name) {
+		ResponseList<User> users = null;
+		
+		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
+		Facebook facebook = (Facebook) request.getSession().getAttribute("facebook");
+		if(facebook == null) {
+			facebook = new FacebookFactory().getInstance();
+		}
+		
+		//Obtenemos las redes visibles, y por cada uno sus users con la esperanza de obtener relaciones
+		List<SocialNetwork> socialNetworks = getVisiblesSocialNetworks();
+		String query = name;//"https://graph.facebook.com/v2.0/search?q=Java&type=user";
+		
+		try {
+			if(socialNetworks != null) {
+				for(SocialNetwork sn : socialNetworks) {
+					ResponseList<User> aux = null;
+					AccessToken accesstokenDB = sn.getAccessToken();
+					facebook4j.auth.AccessToken accesstoken = new facebook4j.auth.AccessToken(accesstokenDB.getAccessToken());
+					facebook.setOAuthAccessToken(accesstoken);
+					aux = facebook.searchUsers(query);
+					if(users == null) {
+						users = aux;
+					} else {
+						users.addAll(aux);
+					}
+				}
+			}
+		} catch(FacebookException e) {
+			
+		}
+		
+		return users;
+	}
+	
+	public ResponseList<Page> searchPages(String name) {
+		ResponseList<Page> pages = null;
+		
+		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
+		Facebook facebook = (Facebook) request.getSession().getAttribute("facebook");
+		if(facebook == null) {
+			facebook = new FacebookFactory().getInstance();
+		}
+		
+		List<SocialNetwork> socialNetworks = getVisiblesSocialNetworks();
+		String query = name;
+		
+		try {
+			if(socialNetworks != null) {
+				for(SocialNetwork sn : socialNetworks) {
+					ResponseList<Page> aux = null;
+					AccessToken accesstokenDB = sn.getAccessToken();
+					facebook4j.auth.AccessToken accesstoken = new facebook4j.auth.AccessToken(accesstokenDB.getAccessToken());
+					facebook.setOAuthAccessToken(accesstoken);
+					aux = facebook.searchPages(query);
+					if(pages == null) {
+						pages = aux;
+					} else {
+						pages.addAll(aux);
+					}
+				}
+			}
+			
+		} catch(FacebookException e) {
+			
+		}
+		
+		return pages;
 	}
 	
 	public Post getPost(int idfb, String idpost) throws FacebookException {

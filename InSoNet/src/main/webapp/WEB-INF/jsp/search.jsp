@@ -6,6 +6,8 @@
 <%@ page import="ar.com.insonet.service.FacebookServiceImpl" %>
 <%@ page import="facebook4j.Facebook" %>
 <%@ page import="facebook4j.Post" %>
+<%@ page import="facebook4j.User" %>
+<%@ page import="facebook4j.Page" %>
 <%@ page import="facebook4j.Comment" %>
 <%@ page import="facebook4j.Notification" %>
 <%@ page import="facebook4j.ResponseList" %>
@@ -17,7 +19,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>InSoNet</title>
+<title>InSoNet - Resultados de busqueda</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!-- Bootstrap -->
 <link href="<c:url value='/resources/css/bootstrap.min.css' />" rel="stylesheet" type="text/css" />
@@ -146,80 +148,43 @@
 </c:choose>  
     
     </div>
-    <div class="row">
-    <c:if test="${domainUser.isEnabled() == false}">
-        <p class="alert alert-danger">
-            Para disponer de toda la funcionalidad de Insonet.<br/>
-            Por favor confirme su registro por medio del correo que se le envio!
-        </p>
-    </c:if>           
-    </div>
+<%ResponseList<User> usersFB = (ResponseList<User>)request.getSession().getAttribute("usersFB"); %>
+<%ResponseList<Page> pagesFB = (ResponseList<Page>)request.getSession().getAttribute("pagesFB"); %>
 <%InsonetUser domainUser = (InsonetUser) request.getSession().getAttribute("domainUser");%>
 <%List<SocialNetwork> nets = domainUser.getSocialNetwork();%>
-<% if (nets.size() > 0) {%>
-    <div class="row">    
-    <%for(SocialNetwork n : nets) {%>
-        <%if(n.isVisible()==true) {%>
-        <div class="col-lg-6" id="columnSocial-<%=n.getId() %>">
-            <p class="text-center">Facebook - <%=n.getUsernameSocial()%><button type="button" id="columnSocial-<%=n.getId() %>-x" onclick="closeColumn(this.id)" class="close" aria-hidden="true" title="Cerrar columna">&times;</button></p>    
-        <%ResponseList<Post> posts = fb.getPosts(n.getId()); %>
-        <%if(posts != null) {%>
-        <% for(Post p : posts) { %>
-            <div class="media">
-            <%if(p.getMessage() != null) {%>
-                <a class="pull-left" href="#">
-                    <img class="media-object" src="holder.js/64x64" alt="Foto de perfil de <%=n.getUsernameSocial()%>" class="img-thumbnail" style="width:64px; height:64px;">
-                </a>
-                <%=n.getUsernameSocial() + " " + p.getCreatedTime() + " " + p.getMessage() %>
-            <%}%>
-            <%URL url = p.getPicture();%>
-            <%if (url != null) {%>
-                <img class="media-object" src="<%=url.toString()%>" alt="Foto que publico <%=n.getUsernameSocial() %>" class="img-thumbnail" style="width:140px; height:180px;">
-            <%}%>
-            </div>
-            <%ResponseList<Comment> comm = fb.getCommentsByPost(p.getId(), n.getId()); %>
-            <%if(comm != null) {%>
-            <%for(Comment c : comm) {%>
+    <div class="row">
+        <div class="col-lg-6">
+            <p class="text-center">Facebook</p>
             <ul class="media-list">
+        <%if(usersFB != null) {%>
+            <%for(User u : usersFB) {%>
                 <li class="media">
                     <a class="pull-left" href="#">
-                        <img class="media-object" src="holder.js/64x64" alt="Foto de perfil de Marcos" title="Foto de perfil de <%=n.getUsernameSocial() %>">
+                        <img class="media-object" src="holder.js/64x64" alt="Foto de perfil">
                     </a>
                     <div class="media-body">
-                        <p class="media-heading"><a href="#"><%=n.getUsernameSocial() %></a> comentario</p>
-                        <p class="element"><%=c.getMessage() %></p>
-                        <a href="#" title="Marcar con me gusta">Me gusta</a> . <a href="#" title="Comentar">comentar</a> . <a href="#" title="Compartir">compartir</a>
-                        <ul class="media-list">
-                            <li class="media">
-                                <a class="pull-left" href="#">
-                                    <img class="media-object" src="holder.js/64x64" alt="Mi foto de perfil" title="Mi foto de perfil">
-                                </a>
-                                <div class="media-body">
-                                    <form role="form">
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" placeholder="Escribe un comentario">
-                                            <span class="input-group-btn">
-                                                <button class="btn btn-default" type="button" title="Adjuntar foto a comentario">Adjuntar Foto</button>
-                                            </span>
-                                        </div>
-                                    </form>
-                                </div>
-                            
-                            </li>
-                        </ul>
+                        <p class="media-heading"><a href="#"><%=u.getName() %></a></p>
+                        <p class="element">Ciudad<button type="button" class="btn btn-primary btn-sm pull-right" title="Agregar a mis amigos">Agregar a mis amigos</button></p>
                     </div>
-                
                 </li>
+            <%} %>    
+        <%} %>
+        <%if(pagesFB != null) {%>
+            <%for(Page p : pagesFB) {%>    
+                <li class="media">
+                    <a class="pull-left" href="#">
+                        <img class="media-object" src="holder.js/64x64" alt="Foto de perfil">
+                    </a>
+                    <div class="media-body">
+                        <p class="media-heading"><a href="#"><%=p.getName() %></a></p>
+                        <p class="element">Dirección<button type="button" class="btn btn-primary btn-sm pull-right" title="Marcar con me gusta">Me gusta</button></p>
+                    </div>
+                </li>
+            <%} %>
+        <%} %>
             </ul>
-            <%} %>
-            <%} %>
-        <% }%>
-        <%} %>
         </div>
-        <%} %>
-    <%}%>
     </div>
-<% }%>
 </div>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="<c:url value='/resources/js/bootstrap.min.js'/>"></script>

@@ -65,7 +65,7 @@ function validForm(nameform) {
 	if(isValid) {
 		return { result : isValid, message : "Exito" };
 	} else {
-		return { result : isValid, message : "Debe escribir un mensaje." };
+		return { result : isValid, message : "Debe escribir algo." };
 	}
 	
 }
@@ -111,6 +111,14 @@ function publishing() {
 	return { result : response, message : noticeAlert + forNet };
 }
 
+function deleteFBCookie() {
+	   var name="c_user";
+	   var domain=".facebook.com";
+	   var path="/";
+	   var d = new Date();
+	   document.cookie = name + "=" + ( ( path ) ? ";path=" + path : "") + ( ( domain ) ? ";domain=" + domain : "" ) + ";expires=" + d.toGMTString();
+}
+
 $(document).ready(function() {
 	var hiddenBox = $('#noticeMessage');
 	var audio = $('#noticeAudio');
@@ -140,12 +148,31 @@ $(document).ready(function() {
 		
 			
 	});
+	
+	
 });
 
-function deleteFBCookie() {
-   var name="c_user";
-   var domain=".facebook.com";
-   var path="/";
-   var d = new Date();
-   document.cookie = name + "=" + ( ( path ) ? ";path=" + path : "") + ( ( domain ) ? ";domain=" + domain : "" ) + ";expires=" + d.toGMTString();
-}
+$(document).ready(function(){
+	var searchForm = $('#searchForm');
+	var alertSearch = $('#alertSearch');
+	$('#searchButton').on("click", function(event){
+		validFormJson = validForm("#searchForm");
+		publishingJson = {};
+		if(validFormJson.result === true) {
+			searchForm.submit();			
+		} else {
+			alertSearch.addClass("alert alert-success");
+			alertSearch.html(validFormJson.message);
+		}
+		
+		if(publishingJson.result === true) {
+			alertSearch.addClass("alert alert-success");
+			alertSearch.html(publishingJson.message);
+		} else {
+			document.getElementById("noticeAudio").load();
+			document.getElementById("noticeAudio").play();
+		}
+	});	
+	
+});
+
