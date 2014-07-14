@@ -10,4 +10,5 @@
     <bean id="socialNetworkDAO" class="ar.com.insonet.dao.SocialNetworkDAOImpl"></bean>
     <bean id="socialNetworkTypeDAO" class="ar.com.insonet.dao.SocialNetworkTypeDAOImpl"></bean>
     <bean id="accessTokenDAO" class="ar.com.insonet.dao.AccessTokenDAOImpl"></bean>
+    <bean id="friendDAO" class="ar.com.insonet.dao.FriendDAOImpl"></bean>
 </beans>

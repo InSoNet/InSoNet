@@ -1,5 +1,6 @@
 package ar.com.insonet.model;
 
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
@@ -9,6 +10,8 @@ import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -40,6 +43,10 @@ public class InsonetUser extends User {
 	//private List<Configuration> personalConfiguration = new ArrayList<Configuration>();
 	@OneToMany(cascade= CascadeType.ALL, targetEntity=SocialNetwork.class, fetch=FetchType.EAGER)
 	private List<SocialNetwork> socialNetwork = new ArrayList<SocialNetwork>();
+	//@LazyCollection(LazyCollectionOption.FALSE)
+	@OneToMany(cascade=CascadeType.ALL, targetEntity=Friend.class)
+	private List<Friend> friend = new ArrayList<Friend>();
+	
 	
 	public InsonetUser() {
 		super();
@@ -112,5 +119,15 @@ public class InsonetUser extends User {
 	public void setSocialNetwork(List<SocialNetwork> socialNetwork) {
 		this.socialNetwork = socialNetwork;
 	}
+	
+	//@Basic(fetch=FetchType.LAZY)
+	public List<Friend> getFriend() {
+		return friend;
+	}
+
+	public void setFriend(List<Friend> friend) {
+		this.friend = friend;
+	}
+
 	
 }

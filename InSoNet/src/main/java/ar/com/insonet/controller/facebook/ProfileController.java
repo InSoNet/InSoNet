@@ -51,18 +51,6 @@ public class ProfileController {
         return "/facebook/posts";
 	}*/
 	
-	@RequestMapping(value="/facebook/friends")
-	protected String friendsHandler(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
-		ResponseList<Friend> friendsList;
-		
-		friendsList = fbService.getFriends(request, response);
-        
-        model.addAttribute("friends", friendsList);
-        
-        return "/facebook/friends";
-        		
-	}
-
 	@RequestMapping(value="/facebook/status")
 	protected String statusHandler(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
 		ResponseList<Post> postsList;

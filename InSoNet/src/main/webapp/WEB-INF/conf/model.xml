@@ -9,4 +9,5 @@
     <bean id="accessToken" class="ar.com.insonet.model.AccessToken"></bean>
     <bean id="socialNetwork" class="ar.com.insonet.model.SocialNetwork"></bean>
     <bean id="socialNetworkType" class="ar.com.insonet.model.SocialNetworkType"></bean>
+    <bean id="friend" class="ar.com.insonet.model.Friend"></bean>
 </beans>

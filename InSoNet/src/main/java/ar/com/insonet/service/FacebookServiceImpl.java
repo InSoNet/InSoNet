@@ -106,18 +106,23 @@ public class FacebookServiceImpl implements Serializable {
 				//if (facebook.getAuthorization().isEnabled()) {
 				//	accessToken.setLoginStatus(LoginStatus.CONNECTED.toString());
 				//} else {
-					accessToken.setLoginStatus("connected");
+				accessToken.setLoginStatus("connected");
 		        //}
 				socialNetwork.setAccessToken(accessToken);
 				
 				//SocialNetworkType socialNetworkType = (SocialNetworkType) session.get(SocialNetworkType.class, new Integer(1));
 				//1=facebook,2=twitter
+				facebook.setOAuthAccessToken(fbToken);
 				SocialNetworkType socialNetworkType = socialNetworkTypeDAO.getSocialNetworkType(1);
 				socialNetwork.setSocialNetworkType(socialNetworkType);
 				String userSocialId = facebook.getMe().getId();
 				socialNetwork.setUserSocialId(userSocialId);
 				socialNetwork.setUsernameSocial(usernameSocial);
 				socialNetwork.setVisible(true);
+				//TODO evitar error de crear dos veces la misma lista de amigos
+				//String friendListId = facebook.friends().createFriendlist("InSoNet");
+				//socialNetwork.setFriendListId(friendListId);
+				
 				//Habilitar uno de los dos para guardar socialNetwork 
 				//session.save(socialNetwork);
 				//socialNetworkDAO.addSocialNetwork(socialNetwork);
@@ -141,10 +146,10 @@ public class FacebookServiceImpl implements Serializable {
 				insonetUserDAO.addSocialNetwork(insonetUser);
 				//insonetUserDAO.updateInsonetUser(insonetUser);
 				//socialNetworkDAO.addSocialNetwork(socialNetwork);
-				
+								
 				//tx.commit();
 				
-				request.getSession().setAttribute("accessToken", accessToken);
+				//request.getSession().setAttribute("accessToken", accessToken);
 				
 			} catch (FacebookException e) {
 				throw new ServletException(e);
@@ -469,6 +474,40 @@ public class FacebookServiceImpl implements Serializable {
 		}
 				
 		return friendsList;
+	}
+	
+	public boolean isFriend(String userId) {
+		boolean aux = false;
+		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
+		Facebook facebook = (Facebook) request.getSession().getAttribute("facebook");
+		
+		if(facebook == null) {
+			facebook = new FacebookFactory().getInstance();
+		}
+		
+		List<SocialNetwork> socialNetworks = getVisiblesSocialNetworks();
+				
+		try {
+			//String friendId = null;
+			if(socialNetworks != null) {
+				for(SocialNetwork sn : socialNetworks) {
+					AccessToken accesstokenDB = sn.getAccessToken();
+					facebook4j.auth.AccessToken accesstoken = new facebook4j.auth.AccessToken(accesstokenDB.getAccessToken());
+					facebook.setOAuthAccessToken(accesstoken);
+					ResponseList<Friend> friends = facebook.getBelongsFriend(userId);
+					for(Friend f : friends) {
+						if(f.getId() == userId) {
+							aux = true;
+						}
+					}
+				}
+			}
+			
+		} catch(FacebookException e) {
+			
+		}
+		
+		return aux;
 	}
 	
 	public ResponseList<Post> getStatus(HttpServletRequest request, HttpServletResponse response) throws Exception {

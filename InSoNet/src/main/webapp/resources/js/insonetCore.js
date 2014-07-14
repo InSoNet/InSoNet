@@ -176,3 +176,28 @@ $(document).ready(function(){
 	
 });
 
+$(document).ready(function(){
+	$("[id^='addFriendButton']").on("click", function(event){
+		var userId = this.id.split("-");
+		var url = "http://localhost:8080/InSoNet/friend/facebook/add/" + userId[1];
+		var response;
+		$.ajax({
+			type: "GET",
+			url: url,
+			async: false,
+			success: function(result) {
+	            response = result;
+	        },
+	        error: function (datosError) {
+	            console.log(datosError.responseText);
+	        }
+		});
+		
+		if(response == "ok") {
+			$("#" + this.id).html("Es tu Amigo");
+			$("#" + this.id).addClass("disabled");
+		}
+	});	
+	
+});
+

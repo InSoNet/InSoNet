@@ -87,13 +87,13 @@
                 <div>
                     <form id="searchForm" action="search" method="post" style="margin-top:0px;padding-left:0px;" role="search">
                         <div class="input-group">
-                            <input type="text" id="searchTxt" name="searchTxt" class="form-control" placeholder="Buscar Personas, Páginas, etc." required />
+                            <input type="text" id="searchTxt" name="searchTxt" class="form-control" placeholder="Buscar Personas, Páginas, etc." required <c:if test="${domainUser.getSocialNetwork().isEmpty()}">disabled</c:if>/>
                             <div class="input-group-btn">
-                                <button type="submit" id="searchButton" class="btn btn-default" title="Buscar">Buscar</button>
+                                <button type="submit" id="searchButton" class="btn btn-default <c:if test='${domainUser.getSocialNetwork().isEmpty()}'>disabled</c:if>" title="Buscar">Buscar</button>
                             </div>
                         </div>
                         <div id="alertSearch" class=""></div>
-                        <label for="searchTxt" class="error hidden" style="display:none important;">Escriba un algo</label>
+                        <label for="searchTxt" class="error hidden" style="display:none important;">Escriba algo</label>
                     </form>
                 </div>
                 <div>

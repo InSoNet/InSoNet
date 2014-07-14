@@ -35,13 +35,8 @@ public class SocialNetwork implements Serializable {
 	@OneToOne(cascade = CascadeType.ALL)
 	private AccessToken accessToken;
 	private boolean visible;
+	private String friendListId;
 	
-	public boolean isVisible() {
-		return visible;
-	}
-	public void setVisible(boolean visible) {
-		this.visible = visible;
-	}
 	public Integer getId() {
 		return id;
 	}
@@ -75,6 +70,20 @@ public class SocialNetwork implements Serializable {
 	
 	public void setAccessToken(AccessToken accessToken) {
 		this.accessToken = accessToken;
+	}
+	
+	public boolean isVisible() {
+		return visible;
+	}
+	
+	public void setVisible(boolean visible) {
+		this.visible = visible;
+	}
+	public String getFriendListId() {
+		return friendListId;
+	}
+	public void setFriendListId(String friendListId) {
+		this.friendListId = friendListId;
 	}
 	
 	

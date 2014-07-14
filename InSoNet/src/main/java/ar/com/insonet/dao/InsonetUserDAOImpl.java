@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -86,6 +87,8 @@ public class InsonetUserDAOImpl implements InsonetUserDAO, Serializable {
 	public InsonetUser getInsonetUserByUsername(String username) {
 		Transaction tx =  getCurrentSession().beginTransaction();
 		InsonetUser user = (InsonetUser) getCurrentSession().createQuery("from User u where u.username = :username").setParameter("username", username).uniqueResult();
+		//Para evitar LazyInitializationException supuestamente por tener dos collections en una Entity
+		Hibernate.initialize(user.getFriend());
 		tx.commit();
 		return user;
 	}
@@ -99,6 +102,19 @@ public class InsonetUserDAOImpl implements InsonetUserDAO, Serializable {
 	@SuppressWarnings("unchecked")
 	public List<InsonetUser> getInsonetUsers() {
 		return getCurrentSession().createQuery("from User").list();
+	}
+
+	@Override
+	public void addFriend(InsonetUser insonetUser) {
+		InsonetUser insonetUserToUpdate = getInsonetUser(insonetUser.getId());
+		Transaction tx = getCurrentSession().beginTransaction();
+		if (getCurrentSession().isConnected())
+			insonetUserToUpdate.setFriend(insonetUser.getFriend());
+		getCurrentSession().flush();
+		getCurrentSession().update(insonetUserToUpdate);
+		
+		tx.commit();
+		
 	}
 
 }

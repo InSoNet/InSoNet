@@ -36,5 +36,6 @@
  		<mapping class="ar.com.insonet.model.SocialNetworkType"/>
  		<mapping class="ar.com.insonet.model.AccessToken"/>
  		<mapping class="ar.com.insonet.model.Role"/>
+ 		<mapping class="ar.com.insonet.model.Friend"/>
 	</session-factory>
 </hibernate-configuration>

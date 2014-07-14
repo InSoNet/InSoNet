@@ -5,9 +5,8 @@
 <%@ page import="ar.com.insonet.model.SocialNetwork" %>
 <%@ page import="ar.com.insonet.service.FacebookServiceImpl" %>
 <%@ page import="facebook4j.Facebook" %>
+<%@ page import="facebook4j.Friend" %>
 <%@ page import="facebook4j.Post" %>
-<%@ page import="facebook4j.User" %>
-<%@ page import="facebook4j.Page" %>
 <%@ page import="facebook4j.Comment" %>
 <%@ page import="facebook4j.Notification" %>
 <%@ page import="facebook4j.ResponseList" %>
@@ -19,7 +18,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>InSoNet - Resultados de busqueda</title>
+<title>InSoNet</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!-- Bootstrap -->
 <link href="<c:url value='/resources/css/bootstrap.min.css' />" rel="stylesheet" type="text/css" />
@@ -148,45 +147,3 @@
 </c:choose>  
     
     </div>
-<%ResponseList<User> usersFB = (ResponseList<User>)request.getSession().getAttribute("usersFB"); %>
-<%ResponseList<Page> pagesFB = (ResponseList<Page>)request.getSession().getAttribute("pagesFB"); %>
-<%InsonetUser domainUser = (InsonetUser) request.getSession().getAttribute("domainUser");%>
-<%List<SocialNetwork> nets = domainUser.getSocialNetwork();%>
-    <div class="row">
-        <div class="col-lg-6">
-            <p class="text-center">Facebook</p>
-            <ul class="media-list">
-        <%if(usersFB != null) {%>
-            <%for(User u : usersFB) {%>
-                <li class="media">
-                    <a class="pull-left" href="#">
-                        <img class="media-object" src="<%if(u.getPicture() != null){ %><%=u.getPicture().getURL() %><%} else {%>holder.js/64x64<%} %>" alt="Foto de perfil de <%=u.getName()%>">
-                    </a>
-                    <div class="media-body">
-                        <p class="media-heading"><a href="#"><%=u.getName() %></a></p>
-                        <p class="element"><%if(u.getHometown() != null) {%><%=u.getHometown().getName() %><%} %> <%if(u.getLocale() != null) {%>.<%=u.getLocale().getCountry() %><%} %><button type="button" id="addFriendButton-<%=u.getId()%>" class="btn btn-primary btn-sm pull-right <%if(fb.isFriend(u.getId())){ %>disabled<%}%>" title="Agregar a mis amigos"><%if(fb.isFriend(u.getId())) {%>Es tu amigo <%} else {%>Agregar a mis amigos<%} %></button></p>
-                    </div>
-                </li>
-            <%} %>
-        <%} %>
-        <%if(pagesFB != null) {%>
-            <%for(Page p : pagesFB) {%>    
-                <li class="media">
-                    <a class="pull-left" href="#">
-                        <img class="media-object" src="holder.js/64x64" alt="Foto de perfil">
-                    </a>
-                    <div class="media-body">
-                        <p class="media-heading"><a href="#"><%=p.getName() %></a></p>
-                        <p class="element">Dirección<button type="button" class="btn btn-primary btn-sm pull-right" title="Marcar con me gusta">Me gusta</button></p>
-                    </div>
-                </li>
-            <%} %>
-        <%} %>
-            </ul>
-        </div>
-    </div>
-</div>
-<!-- Include all compiled plugins (below), or include individual files as needed -->
-<script src="<c:url value='/resources/js/bootstrap.min.js'/>"></script>
-</body>
-</html>

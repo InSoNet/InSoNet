@@ -61,6 +61,7 @@ public class SearchController {
 		request.getSession().setAttribute("fb", facebookService);
 		request.getSession().setAttribute("usersFB", usersFB);
 		request.getSession().setAttribute("pagesFB", pagesFB);
+		request.getSession().setAttribute("domainUser", domainUser);
 		
 		return "/search";
 	}
