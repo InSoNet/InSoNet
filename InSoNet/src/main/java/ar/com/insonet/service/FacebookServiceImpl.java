@@ -236,6 +236,30 @@ public class FacebookServiceImpl implements Serializable {
 		return result;
 	}
 	
+	public String addComment(String id, String message, String post) throws ServletException {
+		String result = "nok";
+		String idComm ="";
+		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
+		Facebook facebook = (Facebook) request.getSession().getAttribute("facebook");
+		if(facebook == null) {
+			facebook = new FacebookFactory().getInstance();
+			request.getSession().setAttribute("facebook", facebook);
+		}
+		SocialNetwork sn = socialNetworkDAO.getSocialNetwork(Integer.parseInt(id));
+		try {
+			AccessToken accesstokenDB = sn.getAccessToken();
+			facebook4j.auth.AccessToken accesstoken = new facebook4j.auth.AccessToken(accesstokenDB.getAccessToken());
+			facebook.setOAuthAccessToken(accesstoken);
+			idComm = facebook.posts().commentPost(post, message);
+			result = "ok";
+		
+		} catch (FacebookException e) {
+			throw new ServletException(e);
+		}
+		
+		return result;
+	}
+	
 	public List<SocialNetwork> getVisiblesSocialNetworks() {
 		List<SocialNetwork> aux = new ArrayList<SocialNetwork>();
 		

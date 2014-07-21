@@ -13,7 +13,9 @@ function isKeyPressed(event) {
                 break;
         }
         //alert("The shift key was pressed!"+event.keyCode+numCol);
-    }    
+    }
+    
+    
 }
 
 function closeColumn(idCol) {
@@ -57,6 +59,21 @@ function sendEmailConfirm() {
 	
 }
 
+function getURL() {
+	var path = location.pathname;
+	var protocol = location.protocol;
+	var hostname = location.host;
+	var url = "";
+	
+	url = protocol + "//" + hostname;
+	var pos = path.indexOf("InSoNet");
+	if(pos !== -1) {
+		url = url + "/InSoNet"; 
+	} 
+	
+	return url;
+}
+
 function validForm(nameform) {
 	var form = $( nameform );
 	form.validate();
@@ -70,6 +87,26 @@ function validForm(nameform) {
 	
 }
 
+function addComment(net, text, post) {
+	//var url = "http://localhost:8080/InSoNet/" + net + "/comment/add";
+	var url = getURL() + "/facebook/" + net + "/comment/add";  
+	var response;
+	
+	$.ajax({
+		type: "GET",
+		url: url,
+		data: "m=" + text + "&p=" + post,
+		async: false,
+		success: function (result) {
+            response = result;
+        },
+        error: function (datosError) {
+            console.log(datosError.responseText);
+        }
+	});
+	
+	return response;
+}
 function addPost(net, text) {
 	var url = "http://localhost:8080/InSoNet/" + net + "/post/add";
 	var response;
@@ -197,7 +234,28 @@ $(document).ready(function(){
 			$("#" + this.id).html("Es tu Amigo");
 			$("#" + this.id).addClass("disabled");
 		}
-	});	
+	});
+	
+	$("[id^='comment-']").keypress(function(event){
+		if(event.keyCode == 13) {
+			var commentsId = this.id.split("-");
+			var netId = $("#commentHidden-" + commentsId[1]).val();
+		    var formId = "#commentForm-" + commentsId[1];
+		    validFormJson = validForm(formId);
+		    if(validFormJson.result === true){
+		    	response = addComment(netId, this.value, commentsId[1]);
+		    	if(response == "ok") {
+		    		alert("Comentario enviado con exito");
+		    	}
+		    } else {
+		    	alert("Escriba algo");
+		    }
+		}
+				
+	});
+	
 	
 });
+
+
 

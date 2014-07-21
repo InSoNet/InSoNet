@@ -139,11 +139,12 @@ public class HomeController {
 		try {
     		HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
     		Role setRole = (Role) HibernateUtil.getSessionFactory().getCurrentSession().get(Role.class, new Integer(1));//1=user,2=moderator,3=admin
-    		user.setRole(setRole);
-    		insonetUserDAO.addInsonetUser(user);    		
     		HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+    		user.setRole(setRole);
+    		insonetUserDAO.addInsonetUser(user);
+    		
     		httpServletRequest.login(user.getUsername(), user.getPassword());
-    		sendMailService.sendMailConfirm(user.getEmail());            
+    		sendMailService.sendMailConfirm(user.getEmail());   
     	} catch(MailException mailex) {
     		throw new ServletException(mailex);
     	} catch(Exception ex) {

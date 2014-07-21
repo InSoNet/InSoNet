@@ -37,7 +37,7 @@
     <script type='text/javascript' src="<c:url value='/resources/js/jquery.html5-placeholder-shim.js'/>"></script>
 <![endif]-->
 </head>
-<body>
+<body onkeypress="isKeyPressed(event)">
 <div class="container">
     <div class="row">
 <%FacebookServiceImpl fb = (FacebookServiceImpl) request.getSession().getAttribute("fb");%>
@@ -170,12 +170,19 @@
                 <a class="pull-left" href="#">
                     <img class="media-object" src="holder.js/64x64" alt="Foto de perfil de <%=n.getUsernameSocial()%>" class="img-thumbnail" style="width:64px; height:64px;">
                 </a>
-                <%=n.getUsernameSocial() + " " + p.getCreatedTime() + " " + p.getMessage() %>
+                <div class="media-body">
+                    <p class="media-heading"><a href="#"><%=n.getUsernameSocial() %></a></p>
+                    <p class="element"><%=p.getCreatedTime()%></p>
+                    <p class="element"><%=p.getMessage() %></p>
+                    <a href="#" title="Marcar con me gusta">Me gusta</a> . <a href="#" title="Comentar">Comentar</a> . <a href="#" title="Compartir">Compartir</a>
+                </div>
+                
             <%}%>
             <%URL url = p.getPicture();%>
             <%if (url != null) {%>
                 <img class="media-object" src="<%=url.toString()%>" alt="Foto que publico <%=n.getUsernameSocial() %>" class="img-thumbnail" style="width:140px; height:180px;">
             <%}%>
+                
             </div>
             <%ResponseList<Comment> comm = fb.getCommentsByPost(p.getId(), n.getId()); %>
             <%if(comm != null) {%>
@@ -188,31 +195,42 @@
                     <div class="media-body">
                         <p class="media-heading"><a href="#"><%=n.getUsernameSocial() %></a> comentario</p>
                         <p class="element"><%=c.getMessage() %></p>
-                        <a href="#" title="Marcar con me gusta">Me gusta</a> . <a href="#" title="Comentar">comentar</a> . <a href="#" title="Compartir">compartir</a>
-                        <ul class="media-list">
-                            <li class="media">
-                                <a class="pull-left" href="#">
-                                    <img class="media-object" src="holder.js/64x64" alt="Mi foto de perfil" title="Mi foto de perfil">
-                                </a>
-                                <div class="media-body">
-                                    <form role="form">
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" placeholder="Escribe un comentario">
-                                            <span class="input-group-btn">
-                                                <button class="btn btn-default" type="button" title="Adjuntar foto a comentario">Adjuntar Foto</button>
-                                            </span>
-                                        </div>
-                                    </form>
-                                </div>
-                            
-                            </li>
-                        </ul>
+                        <a href="#" title="Marcar con me gusta">Me gusta</a>
+                        
                     </div>
                 
                 </li>
             </ul>
             <%} %>
             <%} %>
+            <%if(p.getMessage() != null || url != null) {%>
+            <div class="media">
+                <ul class="media-list">
+                            <li class="media">
+                                <a class="pull-left" href="#">
+                                    <img class="media-object" src="holder.js/64x64" alt="Mi foto de perfil" title="Mi foto de perfil">
+                                </a>
+                                <div class="media-body">
+                                    <form id="commentForm-<%=p.getId()%>" role="form">
+                                        <input type="hidden" id="commentHidden-<%=p.getId()%>" value="<%=n.getId()%>"/>
+                                        <div class="input-group">
+                                            <input type="text" id="comment-<%=p.getId()%>" name="comment-<%=p.getId()%>" class="form-control" placeholder="Escribe un comentario" required/>
+                                            <span class="input-group-btn">
+                                                <button class="btn btn-default" type="button" title="Adjuntar foto a comentario">Adjuntar Foto</button>
+                                            </span>                                            
+                                        </div>
+                                        <div class="input-group">
+                                            <label for="comment-<%=p.getId()%>" class="error hidden" style="display:none important;">Escriba un mensaje</label>
+                                            <span class="help-block">Presione enter para postear</span>
+                                        </div>
+                                    </form>
+                                </div>
+                            
+                            </li>
+                        </ul>
+            </div>
+            <%} %>
+           
         <% }%>
         <%} %>
         </div>

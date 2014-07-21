@@ -47,6 +47,20 @@ public class InsonetUserDAOImpl implements InsonetUserDAO, Serializable {
 		getCurrentSession().update(insonetUserToUpdate);
 		tx.commit();
 	}
+	
+	public void updateProfileInsonetUser(InsonetUser insonetUser) {
+		
+		InsonetUser insonetUserToUpdate = getInsonetUser(insonetUser.getId());
+		insonetUserToUpdate.setPassword(insonetUser.getPassword());
+		insonetUserToUpdate.setEmail(insonetUser.getEmail());
+		insonetUserToUpdate.setName(insonetUser.getName());
+		insonetUserToUpdate.setRole(insonetUser.getRole());
+		insonetUserToUpdate.setSurname(insonetUser.getSurname());
+		insonetUserToUpdate.setEnabled(insonetUser.isEnabled());
+		Transaction tx = getCurrentSession().beginTransaction();
+		getCurrentSession().update(insonetUserToUpdate);
+		tx.commit();
+	}
 
 	public void addSocialNetwork(InsonetUser insonetUser) {
 		InsonetUser insonetUserToUpdate = getInsonetUser(insonetUser.getId());

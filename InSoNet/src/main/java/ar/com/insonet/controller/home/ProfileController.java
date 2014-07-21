@@ -80,14 +80,22 @@ public class ProfileController {
 		try {
     		HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
     		Role setRole = (Role) HibernateUtil.getSessionFactory().getCurrentSession().get(Role.class, new Integer(1));//1=user,2=moderator,3=admin
-    		user.setRole(setRole);
-    		insonetUserDAO.updateInsonetUser(user);    		
     		HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
-    		sendMailService.sendMail(user.getEmail());            
+    		user.setRole(setRole);
+    		InsonetUser iuaux = insonetUserDAO.getInsonetUserByUsername(user.getUsername());
+    		user.setId(iuaux.getId());
+    		if(!user.getEmail().equals(iuaux.getEmail())) {
+    			user.setEnabled(false);
+    			sendMailService.sendMailConfirm(user.getEmail());
+    		}
+    		
+    		insonetUserDAO.updateProfileInsonetUser(user);  		
+    		
+    		//sendMailService.sendMail(user.getEmail());            
     	} catch(MailException mailex) {
     		throw new ServletException(mailex);
     	} catch(Exception ex) {
-    		HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().rollback();
+    		//HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().rollback();
     		throw new ServletException(ex); 
     	}
     	

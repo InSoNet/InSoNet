@@ -60,7 +60,7 @@
                     <button type="button" class="btn btn-default btn-xs" title="Agregar Columna">
                       <span class="glyphicon glyphicon-plus"></span> Agregar Columna
                     </button>
-                    <button type="button" class="btn btn-default btn-xs" title="Agregar red social" onclick="location.href='${pageContext.request.contextPath}/index';">
+                    <button type="button" class="btn btn-default btn-xs" title="Agregar red social" onclick="location.href='${pageContext.request.contextPath}/addnet';">
                       <span class="glyphicon glyphicon-plus"></span> Agregar Red Social
                     </button>
                     
@@ -132,6 +132,7 @@
             <p class="lead"><strong>Información básica</strong></p>
             <form:form action="${pageContext.request.contextPath}/profile/update" commandName="insonetUser" method="post" role="form">
                 <form:errors path="*" cssClass="alert alert-danger" element="div" />
+                <form:hidden path="enabled"/>
                 <div class="form-group">
                     <label for="name">Nombre</label>
                     <form:input path="name" class="form-control" placeholder="Ingrese su nombre" required="required" />
@@ -169,7 +170,7 @@
                     <div class="" id="result"></div>
                 </li>
                 <li>
-                    <a href="${pageContext.request.contextPath}/index">Añadir red social</a>
+                    <a href="${pageContext.request.contextPath}/addnet">Añadir red social</a>
                 </li>
             </ul>                                    
         </div>
