@@ -9,11 +9,10 @@
 <%@ page import="facebook4j.Comment" %>
 <%@ page import="facebook4j.Notification" %>
 <%@ page import="facebook4j.ResponseList" %>
-<%@ page import="facebook4j.PagableList" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<!DOCTYPE html">
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -25,6 +24,7 @@
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <script src="<c:url value='/resources/js/jquery.js'/>"></script>
 <script src="<c:url value='/resources/js/jquery.validate.js'/>"></script>
+<script src="http://malsup.github.com/jquery.form.js"></script> 
 <script src="<c:url value='/resources/js/insonetCore.js'/>" type="text/javascript"></script>
 <!-- conditional comments -->
 <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -46,13 +46,42 @@
   <c:when test="${domainUser.isEnabled() == true}">
         <nav class="navbar navbar-default" role="navigation">
             <div class="col-lg-6">
-                <form  role="form" id="formMessage">
+                <form action="${pageContext.request.contextPath}/facebook/post/add" method="post" role="form" id="formMessage" enctype="multipart/form-data">
                 <div class="input-group">                    
                     <input name="messageTxt" id="messageTxt" type="text" class="form-control" placeholder="Escribir mensaje..." required/>
                     <div class="input-group-btn">
-                        <button type="button" class="btn btn-default" name="privacidad" title="Privacidad de mensaje"><span class="glyphicon glyphicon-lock"></span></button>
-                        <button class="btn btn-default" type="button" title="Adjuntar foto">Adjuntar Foto</button>
+                        <button type="button" class="btn btn-default" name="privacidad" title="Privacidad de mensaje" data-toggle="modal" data-target="#modalPrivacidad"><span class="glyphicon glyphicon-lock"></span></button>
+                        <button id="adjuntar" class="btn btn-default" type="button" title="Adjuntar foto">Adjuntar Foto</button>
                         <button type="submit" id="publishingButton" class="btn btn-default" title="Publicar mensaje" lang="es">Enviar</button>
+                        <input type="file" id="filePhoto" name="filePhoto" class="hidden">
+                        <div class="modal fade" id="modalPrivacidad" tabindex="-1" role="dialog" aria-labelledby="Privacidad" aria-hidden="true">
+						  <div class="modal-dialog">
+						    <div class="modal-content">
+						      <div class="modal-header">
+						        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+						        <h4 class="modal-title">Elija nivel de privacidad</h4>
+						      </div>
+						      <div class="modal-body">
+						        <label>
+						          <input type="checkbox" value="SELF" title="Solo para mi"/>Solo para mi
+						        </label>
+						        <label>
+						          <input type="checkbox" value="FRIENDS_OF_FRIENDS" title="Para amigos de mis amigos"/>Amigos de amigos
+						        </label>
+						        <label>
+						          <input type="checkbox" value="ALL_FRIENDS" title="Para todos los amigos"/>Amigos
+						        </label>
+						        <label>
+						          <input type="checkbox" value="EVERYONE" title="Para todos"/>Todos						          
+						        </label>
+						      </div>
+						      <div class="modal-footer">
+						        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+						        <button type="button" class="btn btn-primary">Guardar</button>
+						      </div>
+						    </div><!-- /.modal-content -->
+						  </div><!-- /.modal-dialog -->
+						</div><!-- /.modal -->
                     </div>
                 </div>
                 <div id="noticeMessage" class=""></div>
@@ -156,7 +185,7 @@
     </div>
 <%InsonetUser domainUser = (InsonetUser) request.getSession().getAttribute("domainUser");%>
 <%List<SocialNetwork> nets = domainUser.getSocialNetwork();%>
-<% if (nets.size() > 0) {%>
+<%if(nets.size() > 0) {%>
     <div class="row">    
     <%for(SocialNetwork n : nets) {%>
         <%if(n.isVisible()==true) {%>
@@ -166,23 +195,23 @@
         <%if(posts != null) {%>
         <% for(Post p : posts) { %>
             <div class="media">
-            <%if(p.getMessage() != null) {%>
+            <%URL url = p.getPicture();%>
+            <%if(p.getMessage() != null || url != null) {%>
                 <a class="pull-left" href="#">
-                    <img class="media-object" src="holder.js/64x64" alt="Foto de perfil de <%=n.getUsernameSocial()%>" class="img-thumbnail" style="width:64px; height:64px;">
+                    <img class="media-object" src="holder.js/64x64" alt="Foto de perfil de <%=p.getFrom().getName() %>" class="img-thumbnail" style="width:64px; height:64px;">
                 </a>
                 <div class="media-body">
-                    <p class="media-heading"><a href="#"><%=n.getUsernameSocial() %></a></p>
+                    <p class="media-heading"><a href="#"><%=p.getFrom().getName() %></a></p>
                     <p class="element"><%=p.getCreatedTime()%></p>
+                <%if(p.getMessage() != null) {%>    
                     <p class="element"><%=p.getMessage() %></p>
+                <%}%>
+                <%if(url != null) {%>
+	                <img class="media-object" src="<%=url.toString()%>" alt="Foto que publico <%=p.getFrom().getName() %>" class="img-thumbnail" style="width:140px; height:180px;">
+	            <%}%>
                     <a href="#" title="Marcar con me gusta">Me gusta</a> . <a href="#" title="Comentar">Comentar</a> . <a href="#" title="Compartir">Compartir</a>
                 </div>
-                
             <%}%>
-            <%URL url = p.getPicture();%>
-            <%if (url != null) {%>
-                <img class="media-object" src="<%=url.toString()%>" alt="Foto que publico <%=n.getUsernameSocial() %>" class="img-thumbnail" style="width:140px; height:180px;">
-            <%}%>
-                
             </div>
             <%ResponseList<Comment> comm = fb.getCommentsByPost(p.getId(), n.getId()); %>
             <%if(comm != null) {%>
@@ -190,15 +219,13 @@
             <ul class="media-list">
                 <li class="media">
                     <a class="pull-left" href="#">
-                        <img class="media-object" src="holder.js/64x64" alt="Foto de perfil de Marcos" title="Foto de perfil de <%=n.getUsernameSocial() %>">
+                        <img class="media-object" src="holder.js/64x64" alt="Foto de perfil de <%=c.getFrom().getName() %>" title="Foto de perfil de <%=c.getFrom().getName() %>">
                     </a>
                     <div class="media-body">
-                        <p class="media-heading"><a href="#"><%=n.getUsernameSocial() %></a> comentario</p>
+                        <p class="media-heading"><a href="#"><%=c.getFrom().getName() %></a> comentario</p>
                         <p class="element"><%=c.getMessage() %></p>
                         <a href="#" title="Marcar con me gusta">Me gusta</a>
-                        
                     </div>
-                
                 </li>
             </ul>
             <%} %>
@@ -206,28 +233,28 @@
             <%if(p.getMessage() != null || url != null) {%>
             <div class="media">
                 <ul class="media-list">
-                            <li class="media">
-                                <a class="pull-left" href="#">
-                                    <img class="media-object" src="holder.js/64x64" alt="Mi foto de perfil" title="Mi foto de perfil">
-                                </a>
-                                <div class="media-body">
-                                    <form id="commentForm-<%=p.getId()%>" role="form">
-                                        <input type="hidden" id="commentHidden-<%=p.getId()%>" value="<%=n.getId()%>"/>
-                                        <div class="input-group">
-                                            <input type="text" id="comment-<%=p.getId()%>" name="comment-<%=p.getId()%>" class="form-control" placeholder="Escribe un comentario" required/>
-                                            <span class="input-group-btn">
-                                                <button class="btn btn-default" type="button" title="Adjuntar foto a comentario">Adjuntar Foto</button>
-                                            </span>                                            
-                                        </div>
-                                        <div class="input-group">
-                                            <label for="comment-<%=p.getId()%>" class="error hidden" style="display:none important;">Escriba un mensaje</label>
-                                            <span class="help-block">Presione enter para postear</span>
-                                        </div>
-                                    </form>
+                    <li class="media">
+                        <a class="pull-left" href="#">
+                            <img class="media-object" src="holder.js/64x64" alt="Mi foto de perfil" title="Mi foto de perfil">
+                        </a>
+                        <div class="media-body">
+                            <form id="commentForm-<%=p.getId()%>" role="form">
+                                <input type="hidden" id="commentHidden-<%=p.getId()%>" value="<%=n.getId()%>"/>
+                                <div class="input-group">
+                                    <input type="text" id="comment-<%=p.getId()%>" name="comment-<%=p.getId()%>" class="form-control" placeholder="Escribe un comentario" required/>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button" title="Adjuntar foto a comentario">Adjuntar Foto</button>
+                                    </span>                                            
                                 </div>
-                            
-                            </li>
-                        </ul>
+                                <div class="input-group">
+                                    <label for="comment-<%=p.getId()%>" class="error hidden" style="display:none important;">Escriba un mensaje</label>
+                                    <span class="help-block">Presione enter para postear</span>
+                                </div>
+                            </form>
+                        </div>
+                    
+                    </li>
+                </ul>
             </div>
             <%} %>
            
@@ -237,7 +264,7 @@
         <%} %>
     <%}%>
     </div>
-<% }%>
+<%}%>
 </div>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="<c:url value='/resources/js/bootstrap.min.js'/>"></script>

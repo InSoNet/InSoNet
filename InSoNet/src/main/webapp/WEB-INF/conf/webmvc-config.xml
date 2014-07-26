@@ -35,10 +35,12 @@
         <property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
         <property name="prefix" value="/WEB-INF/jsp/" />
         <property name="suffix" value=".jsp" />
-    </bean>    
+    </bean>
+    <!-- bean id="defaultViews" class="org.springframework.web.servlet.view.json.MappingJackson2JsonView" /-->
     <!-- bind your messages.properties -->
     <bean class="org.springframework.context.support.ResourceBundleMessageSource" id="messageSource">
         <property name="basename" value="messages" />
     </bean>
-        
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
+
 </beans>

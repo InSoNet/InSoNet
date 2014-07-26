@@ -15,7 +15,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<!DOCTYPE html">
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -52,9 +52,38 @@
                 <div class="input-group">                    
                     <input name="messageTxt" id="messageTxt" type="text" class="form-control" placeholder="Escribir mensaje..." required/>
                     <div class="input-group-btn">
-                        <button type="button" class="btn btn-default" name="privacidad" title="Privacidad de mensaje"><span class="glyphicon glyphicon-lock"></span></button>
-                        <button class="btn btn-default" type="button" title="Adjuntar foto">Adjuntar Foto</button>
+                        <button type="button" class="btn btn-default" name="privacidad" title="Privacidad de mensaje" data-toggle="modal" data-target="#modalPrivacidad"><span class="glyphicon glyphicon-lock"></span></button>
+                        <button id="adjuntar" class="btn btn-default" type="button" title="Adjuntar foto">Adjuntar Foto</button>
                         <button type="submit" id="publishingButton" class="btn btn-default" title="Publicar mensaje" lang="es">Enviar</button>
+                        <input type="file" id="filePhoto" class="hidden">
+                        <div class="modal fade" id="modalPrivacidad" tabindex="-1" role="dialog" aria-labelledby="Privacidad" aria-hidden="true">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                <h4 class="modal-title">Elija nivel de privacidad</h4>
+                              </div>
+                              <div class="modal-body">
+                                <label>
+                                  <input type="checkbox" value="SELF" title="Solo para mi"/>Solo para mi
+                                </label>
+                                <label>
+                                  <input type="checkbox" value="FRIENDS_OF_FRIENDS" title="Para amigos de mis amigos"/>Amigos de amigos
+                                </label>
+                                <label>
+                                  <input type="checkbox" value="ALL_FRIENDS" title="Para todos los amigos"/>Amigos
+                                </label>
+                                <label>
+                                  <input type="checkbox" value="EVERYONE" title="Para todos"/>Todos                               
+                                </label>
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                                <button type="button" class="btn btn-primary">Guardar</button>
+                              </div>
+                            </div><!-- /.modal-content -->
+                          </div><!-- /.modal-dialog -->
+                        </div><!-- /.modal -->
                     </div>
                 </div>
                 <div id="noticeMessage" class=""></div>

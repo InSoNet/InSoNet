@@ -1,7 +1,12 @@
 package ar.com.insonet.service;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
+import java.net.URL;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,10 +41,16 @@ import facebook4j.Facebook;
 import facebook4j.FacebookException;
 import facebook4j.FacebookFactory;
 import facebook4j.Friend;
+import facebook4j.Media;
 import facebook4j.Notification;
 import facebook4j.Page;
+import facebook4j.PagePhotoUpdate;
+import facebook4j.Photo;
+import facebook4j.PhotoUpdate;
 import facebook4j.Post;
 import facebook4j.Comment;
+import facebook4j.PostUpdate;
+import facebook4j.RawAPIResponse;
 import facebook4j.ResponseList;
 import facebook4j.User;
 import facebook4j.auth.Authorization;
@@ -99,19 +110,12 @@ public class FacebookServiceImpl implements Serializable {
 				if(usernameSocial == null) {
 					usernameSocial=facebook.getMe().getName();
 				}
-				//TODO: solo agregar la red social si es nueva.
-				//TODO: por aca solo pasa si es nueva.
+				
 				accessToken.setExpire(fbToken.getExpires());
 				accessToken.setAccessToken(fbToken.getToken());
-				//if (facebook.getAuthorization().isEnabled()) {
-				//	accessToken.setLoginStatus(LoginStatus.CONNECTED.toString());
-				//} else {
 				accessToken.setLoginStatus("connected");
-		        //}
-				socialNetwork.setAccessToken(accessToken);
+		        socialNetwork.setAccessToken(accessToken);
 				
-				//SocialNetworkType socialNetworkType = (SocialNetworkType) session.get(SocialNetworkType.class, new Integer(1));
-				//1=facebook,2=twitter
 				facebook.setOAuthAccessToken(fbToken);
 				SocialNetworkType socialNetworkType = socialNetworkTypeDAO.getSocialNetworkType(1);
 				socialNetwork.setSocialNetworkType(socialNetworkType);
@@ -123,33 +127,21 @@ public class FacebookServiceImpl implements Serializable {
 				//String friendListId = facebook.friends().createFriendlist("InSoNet");
 				//socialNetwork.setFriendListId(friendListId);
 				
-				//Habilitar uno de los dos para guardar socialNetwork 
-				//session.save(socialNetwork);
-				//socialNetworkDAO.addSocialNetwork(socialNetwork);
 				UserDetails userDetails = (UserDetails)request.getSession().getAttribute("principal");
 				if(userDetails == null) {
 					Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 					userDetails = (UserDetails) auth.getPrincipal();
 					request.getSession().setAttribute("principal", userDetails);
 				}
+				
 				String loggedUsername = userDetails.getUsername();
 				InsonetUser insonetUser = insonetUserDAO.getInsonetUserByUsername(loggedUsername);
-				//lo carga por Lazy, probar!
-				//ar.com.insonet.model.User domainUser = userDAO.getUserByUsername(loggedUsername);
-				//insonetUser.setRole(domainUser.getRole());
-				//Transaction tx = session.beginTransaction();
 				socialNetworkDAO.addSocialNetwork(socialNetwork);
 				List<SocialNetwork> list = insonetUser.getSocialNetwork();
-				//List<SocialNetwork> list =  new ArrayList<SocialNetwork>();
 				list.add(socialNetwork);
 				insonetUser.setSocialNetwork(list);
 				insonetUserDAO.addSocialNetwork(insonetUser);
-				//insonetUserDAO.updateInsonetUser(insonetUser);
-				//socialNetworkDAO.addSocialNetwork(socialNetwork);
-								
-				//tx.commit();
 				
-				//request.getSession().setAttribute("accessToken", accessToken);
 				
 			} catch (FacebookException e) {
 				throw new ServletException(e);
@@ -158,13 +150,8 @@ public class FacebookServiceImpl implements Serializable {
 			//TODO log de no aceptar agregar red social.
 		}
 		
-		//TODO: to convert short-lived token to long-lived token
-		//TODO: to store access token and login status
-		//TODO: to add the token as a session variable to identify that browser session with a particular person
-		//http://facebook4j.org/javadoc/index.html ver setOAuthAccessToken(AccessToken accessToken, String callbackURL) 
-		//si sirve para obtener un code de un access token como hace
-		//https://graph.facebook.com/oauth/client_code?access_token=...&client_secret=...&redirect_uri=...&client_id=...
-		return "/index";
+		return "http://www.facebook.com/logout.php?next=" + "http://localhost:8080/InSoNet/" + "&access_token=" + accessToken.getAccessToken();
+		
 	}
 	
 	public String logout(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -178,7 +165,7 @@ public class FacebookServiceImpl implements Serializable {
 		} catch (Exception e) {
 			throw new ServletException(e);
 		}
-		//request.getSession().invalidate();
+		request.getSession().invalidate();
 
 		// Log Out of the Facebook
 		StringBuffer next = request.getRequestURL();
@@ -202,30 +189,47 @@ public class FacebookServiceImpl implements Serializable {
 		return "/facebook/posts?list";
 	}
 	
-	public String addPost(String message) throws Exception {
+	public String addPost(String message, String fileName) throws Exception {
 		String result = "nok";
 		String idPost;
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		request.setCharacterEncoding("UTF-8");
 		Facebook facebook = (Facebook) request.getSession().getAttribute("facebook");
-		//InsonetUser insonetUser = (InsonetUser) request.getSession().getAttribute("domainUser");
-		UserDetails userDetails = (UserDetails)request.getSession().getAttribute("principal");
-		if(userDetails == null) {
-			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-			userDetails = (UserDetails) auth.getPrincipal();
-			request.getSession().setAttribute("principal", userDetails);
-		}
-		String loggedUsername = userDetails.getUsername();
-		InsonetUser insonetUser = insonetUserDAO.getInsonetUserByUsername(loggedUsername);
-		List<SocialNetwork> list = insonetUser.getSocialNetwork();
+		
+		List<SocialNetwork> list = getVisiblesSocialNetworks();
+		PhotoUpdate photoUpdate = null;
+		PagePhotoUpdate pp = null;
+		InputStream auxMedia = null;
+		/*if(photo != null) {
+			auxMedia = photo.getMediaBody();			
+			pp = new PagePhotoUpdate(photo);
+		}*/
+		Media mediaFile = null;
+		
 		try {
 			for(SocialNetwork sn : list) {
 				if(sn.getSocialNetworkType().getId() == 1) {
 					AccessToken accesstokenDB = sn.getAccessToken();
 					facebook4j.auth.AccessToken accesstoken = new facebook4j.auth.AccessToken(accesstokenDB.getAccessToken());
 					facebook.setOAuthAccessToken(accesstoken);
-					idPost = facebook.posts().postStatusMessage(message);
-					result = "ok";	
+					
+					//if(photo != null) {
+					if(fileName != null) {
+						Path path = FileSystems.getDefault().getPath("c:\\Projects\\Java\\InSoNetDAO\\InSoNet\\InSoNet\\src\\main\\webapp\\resources\\tmp", fileName);
+						InputStream file = Files.newInputStream(path);
+						mediaFile = new Media(fileName, file);
+					}
+					if(mediaFile != null) {	
+						Media photo = mediaFile;
+						//Al albun insonet
+						photoUpdate = new PhotoUpdate(photo);
+						photoUpdate.setMessage(message);
+						idPost = facebook.photos().postPhoto(photoUpdate);
+					} else {
+						idPost = facebook.posts().postStatusMessage(message);
+					}
+					
+					result = "ok";
 				}
 			}
 			
@@ -262,15 +266,24 @@ public class FacebookServiceImpl implements Serializable {
 	
 	public List<SocialNetwork> getVisiblesSocialNetworks() {
 		List<SocialNetwork> aux = new ArrayList<SocialNetwork>();
-		
-		List<SocialNetwork> socialNetworks = socialNetworkDAO.getSocialNetworks();
-		if(socialNetworks != null) {
-			for(SocialNetwork sn : socialNetworks) {
+		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
+		UserDetails userDetails = (UserDetails)request.getSession().getAttribute("principal");
+		if(userDetails == null) {
+			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+			userDetails = (UserDetails) auth.getPrincipal();
+			request.getSession().setAttribute("principal", userDetails);
+		}
+		String loggedUsername = userDetails.getUsername();
+		InsonetUser insonetUser = insonetUserDAO.getInsonetUserByUsername(loggedUsername);
+		List<SocialNetwork> list = insonetUser.getSocialNetwork();
+		if(list != null) {
+			for(SocialNetwork sn : list) {
 				if(sn.isVisible()) {
 					aux.add(sn);
 				}
 			}
 		}
+		
 		return aux;
 	}
 	
@@ -285,6 +298,7 @@ public class FacebookServiceImpl implements Serializable {
 		try {
 			facebook.setOAuthAccessToken(accesstoken);
 			postsList = facebook.posts().getFeed();//.getPosts();
+			
 		} catch (FacebookException e) {
 			int subcode = e.getErrorSubcode();
 			if(subcode == 458) {

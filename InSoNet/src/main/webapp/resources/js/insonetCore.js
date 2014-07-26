@@ -1,3 +1,4 @@
+var files;
 var numCol=0;
 var maxNumCol=1;
 function isKeyPressed(event) {
@@ -125,13 +126,90 @@ function addPost(net, text) {
 	return response;
 }
 
+function uploadFiles(){
+	//event.stopPropagation();
+	//event.preventDefault();
+	var aux;
+	var data = new FormData();
+	if(files !== undefined) {
+	$.each(files, function(key, value)	{
+		data.append("filePhoto", value);//si queremos mas de una foto reemplazar "filePhoto" por key
+	});
+	
+	
+	$.ajax({
+		url: getURL() + '/facebook/post/file',
+		type: 'POST',
+		data: data,
+		async: false,
+		cache: false,
+		dataType: 'json',
+		processData: false, // Don't process the files
+		contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+		success: function(data, textStatus, jqXHR) {
+			if(data.result == "ok") {
+				aux = postForm(data);
+			} else {
+				console.log('ERRORS: ' + data);
+			}
+		},
+		error: function(jqXHR, textStatus, errorThrown) {
+			
+			console.log('ERRORS: ' + textStatus);
+			
+		}
+	});
+	} else {
+		var j = { result : "ok", files : "" };
+		aux = postForm(j);
+	}
+	
+	return aux;
+}
+
+function postForm(data) {
+	var url = getURL() + "/facebook/post/submit";
+	var formData = $("#formMessage").serialize();
+	//Para varias fotos
+	/*$.each(data.files, function(key, value)	{
+		formData = formData + '&fileName[]=' + value;
+	});*/
+	formData = formData + '&fileName=' + data.files;
+	var response;
+	$.ajax({
+		type: "POST",
+		url: url,
+		data: formData,
+		cache: false,
+		async: false,
+		dataType: 'json',
+		success: function (r) {
+            response = r.result;
+        },
+        error: function (datosError) {
+            console.log(datosError.responseText);
+        }
+	});
+	return response;
+	//$("#formMessage").submit();
+}
+
 function publishing() {
 	var forNet = "";
 	var escaped = escape($('#messageTxt').val());
 	var response = false;
+	var aux;
+	var data;
 	var noticeAlert = "No se pudo publicar su mensaje en ";
 	if ($("input[name='publishingIn']")[0].checked) {
-		var aux = addPost("facebook", escaped);
+		//var aux = addPost("facebook", escaped);
+		//if(files != null) {
+		aux = uploadFiles();
+		/*} else {
+			data = $("#formMessage").serialize();
+			aux = postForm(data);
+		}*/
+				
 		if (aux == "ok") {
 			forNet = forNet + "Facebook";
 			response = true;
@@ -148,22 +226,61 @@ function publishing() {
 	return { result : response, message : noticeAlert + forNet };
 }
 
-function deleteFBCookie() {
-	   var name="c_user";
-	   var domain=".facebook.com";
-	   var path="/";
-	   var d = new Date();
-	   document.cookie = name + "=" + ( ( path ) ? ";path=" + path : "") + ( ( domain ) ? ";domain=" + domain : "" ) + ";expires=" + d.toGMTString();
-}
-
 $(document).ready(function() {
+	
+	
+	 
+	$('input[type=file]').on('change', prepareUpload);
+	 
+	function prepareUpload(event)
+	{
+		files = event.target.files;
+	}
+	
 	var hiddenBox = $('#noticeMessage');
 	var audio = $('#noticeAudio');
-	$('#publishingButton').on( "click", function( event ) {
+	if(window.FormData !== undefined) {
+		$('#publishingButton').on( "click", function( event ) {
+			
+			validFormJson = validForm("#formMessage");
+			publishingJson = {};
+				
+				
+				
+				if(validFormJson.result === true) {
+					
+						event.stopPropagation(); // Stop stuff happening
+						event.preventDefault(); // Totally stop stuff happening
+						publishingJson = publishing();
+					
+					if(publishingJson.result === true) {
+						hiddenBox.addClass("alert alert-success");
+						//hiddenBox.show();
+						hiddenBox.html(publishingJson.message);
+					} else {
+						//audio.attr("src", "/InSoNet/resources/audio/no-se-pudo-publicar-mensaje.wma");
+						document.getElementById("noticeAudio").load();
+						document.getElementById("noticeAudio").play();
+						//audio.load();
+						//audio.play;
+					}
+								
+				} else {
+					hiddenBox.addClass("alert alert-success");
+					//hiddenBox.show();
+					hiddenBox.html(validFormJson.message);
+				}
+			
+		});
+	} 
+	
+	/*$('#formMessage').on( "submit", function( event ) {
+		event.stopPropagation(); // Stop stuff happening
+		event.preventDefault(); // Totally stop stuff happening
 		validFormJson = validForm("#formMessage");
 		publishingJson = {};
 		if(validFormJson.result === true) {
-			publishingJson = publishing();
+			publishingJson = publishing(event);
 			
 		} else {
 			hiddenBox.addClass("alert alert-success");
@@ -184,10 +301,12 @@ $(document).ready(function() {
 		}
 		
 			
-	});
+	});*/
 	
 	
 });
+	
+
 
 $(document).ready(function(){
 	var searchForm = $('#searchForm');
@@ -254,7 +373,9 @@ $(document).ready(function(){
 				
 	});
 	
-	
+	$('#adjuntar').on("click", function(event){
+		$('#filePhoto').click();
+	});
 });
 
 

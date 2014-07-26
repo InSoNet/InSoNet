@@ -1,3 +1,6 @@
+<%@ page import="ar.com.insonet.service.FacebookServiceImpl" %>
+<%@ page import="facebook4j.ResponseList" %>
+<%@ page import="facebook4j.Notification" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ page import="ar.com.insonet.model.InsonetUser" %>
@@ -29,33 +32,68 @@
 <body>
 <div class="container">
     <div class="row">
+<%FacebookServiceImpl fb = (FacebookServiceImpl) request.getSession().getAttribute("fb");%>
+<%ResponseList<Notification> noti = fb.getNotifications(); %>
 <c:choose>
   <c:when test="${insonetUser.isEnabled() == true}">
         <nav class="navbar navbar-default" role="navigation">
             <div class="col-lg-6">
-                <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Escribir mensaje...">
+                <form  role="form" id="formMessage">
+                <div class="input-group">                    
+                    <input name="messageTxt" id="messageTxt" type="text" class="form-control" placeholder="Escribir mensaje..." required/>
                     <div class="input-group-btn">
-                        <button type="button" class="btn btn-default" name="privacidad" title="Privacidad de mensaje"><span class="glyphicon glyphicon-lock"></span></button>
-                        <button class="btn btn-default" type="button" title="Adjuntar foto">Adjuntar Foto</button>
-                        
+                        <button type="button" class="btn btn-default" name="privacidad" title="Privacidad de mensaje" data-toggle="modal" data-target="#modalPrivacidad"><span class="glyphicon glyphicon-lock"></span></button>
+                        <button id="adjuntar" class="btn btn-default" type="button" title="Adjuntar foto">Adjuntar Foto</button>
+                        <button type="submit" id="publishingButton" class="btn btn-default" title="Publicar mensaje" lang="es">Enviar</button>
+                        <input type="file" id="filePhoto" class="hidden">
+                        <div class="modal fade" id="modalPrivacidad" tabindex="-1" role="dialog" aria-labelledby="Privacidad" aria-hidden="true">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                <h4 class="modal-title">Elija nivel de privacidad</h4>
+                              </div>
+                              <div class="modal-body">
+                                <label>
+                                  <input type="checkbox" value="SELF" title="Solo para mi"/>Solo para mi
+                                </label>
+                                <label>
+                                  <input type="checkbox" value="FRIENDS_OF_FRIENDS" title="Para amigos de mis amigos"/>Amigos de amigos
+                                </label>
+                                <label>
+                                  <input type="checkbox" value="ALL_FRIENDS" title="Para todos los amigos"/>Amigos
+                                </label>
+                                <label>
+                                  <input type="checkbox" value="EVERYONE" title="Para todos"/>Todos                               
+                                </label>
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                                <button type="button" class="btn btn-primary">Guardar</button>
+                              </div>
+                            </div><!-- /.modal-content -->
+                          </div><!-- /.modal-dialog -->
+                        </div><!-- /.modal -->
                     </div>
                 </div>
+                <div id="noticeMessage" class=""></div>
+                <label for="messageTxt" class="error hidden" style="display:none important;">Escriba un mensaje</label>
                 <div class="checkbox-block input-sm">
                     <label>Publicar en:</label>
                     <label>
-                        <input type="checkbox" value="Facebook" title="Publicar en Facebook">
+                        <input name="publishingIn" type="checkbox" value="Facebook" title="Publicar en Facebook" <%if(fb.getVisiblesSocialNetworks().isEmpty()){ %>disabled<%} %>/>
                         Facebook
                     </label>
                     <label>
-                        <input type="checkbox" value="Twitter" title="Publicar en Twitter">
+                        <input name="publishingIn" type="checkbox" value="Twitter" title="Publicar en Twitter" <c:if test="${domainUser.getSocialNetwork().isEmpty()}">disabled</c:if>>
                         Twitter
                     </label>
                     <label>
-                        <input type="checkbox" value="Todos" title="Publicar en todos">
+                        <input name="publishingIn" type="checkbox" value="Todos" title="Publicar en todos" <c:if test="${domainUser.getSocialNetwork().isEmpty()}">disabled</c:if>>
                         Todos
                     </label>
                 </div>
+                </form>
                 <div>
                     <button type="button" class="btn btn-default btn-xs" title="Agregar Columna">
                       <span class="glyphicon glyphicon-plus"></span> Agregar Columna
