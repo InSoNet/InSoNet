@@ -9,6 +9,7 @@ import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,24 +31,16 @@ import static java.nio.file.StandardOpenOption.*;
 @Controller
 @SessionAttributes("privacy")
 @MultipartConfig
+@Component("facebook/post")
 public class PostController {
+	
 	@Autowired
 	private FacebookServiceImpl fbService;
-	
-	
-	/*private PostController(ApplicationContext applicationContext, FacebookServiceImpl facebookService) {
-		this.fbService = facebookService;
-	}
-	
-	@RequestMapping(method=RequestMethod.GET)
-	public String index() {
-		
-		return "/post";
-	}*/
-	
+
 	@RequestMapping(value="/facebook/post/add", method=RequestMethod.POST)
 	public String publishing(@RequestParam("messageTxt") String messageTxt,
 			@RequestParam(value = "publishingIn", required = false) String publishingIn,
+			@RequestParam(value = "privacy", required = false) String privacy,
 			@RequestPart("filePhoto") MultipartFile filePhoto) throws Exception {
 		
 		String fileName = null;
@@ -60,11 +53,12 @@ public class PostController {
 			
 			out.write(file, 0, file.length);
 			out.close();
+			
 			fileName = filePhoto.getOriginalFilename();
 		}
 		
 		if(messageTxt != "") {
-		    fbService.addPost(messageTxt, fileName);
+		    fbService.addPost(messageTxt, privacy, fileName);
 		}
 		
 		return "redirect:/index";
@@ -98,6 +92,7 @@ public class PostController {
 	@ResponseBody
 	public String postSubmit(@RequestParam("messageTxt") String messageTxt,
 			@RequestParam(value = "publishingIn", required = false) String publishingIn,
+			@RequestParam(value = "privacy", required = false) String privacy,
 			@RequestParam(value = "fileName", required = false) String fileName) throws Exception {
 		
 		String result = "nok";
@@ -113,7 +108,7 @@ public class PostController {
 		
         if(messageTxt != "") {
         	//result = fbService.addPost(messageTxt, mediaFile);
-        	result = fbService.addPost(messageTxt, fileName);
+        	result = fbService.addPost(messageTxt, privacy, fileName);
 		    result = "{\"result\": \""+result+"\"}";
 		}
 		

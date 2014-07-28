@@ -50,6 +50,9 @@ import facebook4j.PhotoUpdate;
 import facebook4j.Post;
 import facebook4j.Comment;
 import facebook4j.PostUpdate;
+import facebook4j.PrivacyBuilder;
+import facebook4j.PrivacyParameter;
+import facebook4j.PrivacyType;
 import facebook4j.RawAPIResponse;
 import facebook4j.ResponseList;
 import facebook4j.User;
@@ -189,7 +192,7 @@ public class FacebookServiceImpl implements Serializable {
 		return "/facebook/posts?list";
 	}
 	
-	public String addPost(String message, String fileName) throws Exception {
+	public String addPost(String message, String privacy, String fileName) throws Exception {
 		String result = "nok";
 		String idPost;
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
@@ -198,13 +201,33 @@ public class FacebookServiceImpl implements Serializable {
 		
 		List<SocialNetwork> list = getVisiblesSocialNetworks();
 		PhotoUpdate photoUpdate = null;
-		PagePhotoUpdate pp = null;
+		PostUpdate pu = null;
 		InputStream auxMedia = null;
 		/*if(photo != null) {
 			auxMedia = photo.getMediaBody();			
 			pp = new PagePhotoUpdate(photo);
 		}*/
 		Media mediaFile = null;
+		PrivacyParameter pb = null;
+		//if(privacy != "") {
+			switch(privacy) {
+				case "SELF":
+					pb = new PrivacyBuilder().setValue(PrivacyType.SELF).build();
+					break;
+				case "FRIENDS_OF_FRIENDS":
+					pb = new PrivacyBuilder().setValue(PrivacyType.FRIENDS_OF_FRIENDS).build();
+					break;
+				case "ALL_FRIENDS":
+					pb = new PrivacyBuilder().setValue(PrivacyType.ALL_FRIENDS).build();
+					break;
+				case "EVERYONE":
+					pb = new PrivacyBuilder().setValue(PrivacyType.EVERYONE).build();
+					break;
+				default:
+					pb = new PrivacyBuilder().setValue(PrivacyType.EVERYONE).build();
+					break;
+			}
+		//}
 		
 		try {
 			for(SocialNetwork sn : list) {
@@ -221,12 +244,19 @@ public class FacebookServiceImpl implements Serializable {
 					}
 					if(mediaFile != null) {	
 						Media photo = mediaFile;
-						//Al albun insonet
+						//Al albun insonet, y es solo para amigos
 						photoUpdate = new PhotoUpdate(photo);
 						photoUpdate.setMessage(message);
 						idPost = facebook.photos().postPhoto(photoUpdate);
+						
 					} else {
-						idPost = facebook.posts().postStatusMessage(message);
+						pu = new PostUpdate(message);
+						pu.setPrivacy(pb);
+						idPost = facebook.postFeed(pu);
+						//TODO Para poder postear una foto va ser necesario subirlo a un ftp publico o cdn gratuito.
+						//para usar pu.picture(URL picture)
+						
+						//idPost = facebook.posts().postStatusMessage(message);
 					}
 					
 					result = "ok";

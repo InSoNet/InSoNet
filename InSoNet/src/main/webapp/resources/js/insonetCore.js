@@ -376,6 +376,10 @@ $(document).ready(function(){
 	$('#adjuntar').on("click", function(event){
 		$('#filePhoto').click();
 	});
+	
+	$("input[name='privacy']").on("change", function(event) {
+		//alert($("input[name='privacy']:checked").val());
+	});
 });
 
 

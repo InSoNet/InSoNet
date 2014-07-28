@@ -17,6 +17,7 @@
 	    </property>
 	</bean>
     <bean id="facebookService" class="ar.com.insonet.service.FacebookServiceImpl"></bean>
+    <bean id="twitterService" class="ar.com.insonet.service.TwitterServiceImpl"></bean>
     <bean id="insonetUserDetailsService" class="ar.com.insonet.service.InsonetUserDetailsService"></bean>
     <bean id="sendMailService" class="ar.com.insonet.service.SendMailService">
 	    <property name="mailSender" ref="mailSender" />

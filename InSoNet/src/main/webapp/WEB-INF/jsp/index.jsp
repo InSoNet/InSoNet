@@ -62,22 +62,33 @@
 						        <h4 class="modal-title">Elija nivel de privacidad</h4>
 						      </div>
 						      <div class="modal-body">
-						        <label>
-						          <input type="checkbox" value="SELF" title="Solo para mi"/>Solo para mi
-						        </label>
-						        <label>
-						          <input type="checkbox" value="FRIENDS_OF_FRIENDS" title="Para amigos de mis amigos"/>Amigos de amigos
-						        </label>
-						        <label>
-						          <input type="checkbox" value="ALL_FRIENDS" title="Para todos los amigos"/>Amigos
-						        </label>
-						        <label>
-						          <input type="checkbox" value="EVERYONE" title="Para todos"/>Todos						          
-						        </label>
+							      <div class="radio">
+									  <label>
+									    <input type="radio" name="privacy" id="privacity1" value="SELF" title="Solo Yo">
+									    Solo Yo
+									  </label>
+								  </div>
+							      <div class="radio">
+									  <label>
+									    <input type="radio" name="privacy" id="privacity2" value="FRIENDS_OF_FRIENDS" title="amigos de mis amigos">
+									    Amigos de mis amigos
+									  </label>
+								  </div>
+								  <div class="radio">
+									  <label>
+									    <input type="radio" name="privacy" id="privacity3" value="ALL_FRIENDS" title="Amigos">
+									    Amigos
+									  </label>
+								  </div>
+								  <div class="radio">
+	                                  <label>
+	                                    <input type="radio" name="privacy" id="privacity4" value="EVERYONE" title="Público">
+	                                    Público
+	                                  </label>
+	                              </div>						      				        
 						      </div>
 						      <div class="modal-footer">
 						        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-						        <button type="button" class="btn btn-primary">Guardar</button>
 						      </div>
 						    </div><!-- /.modal-content -->
 						  </div><!-- /.modal-dialog -->
@@ -203,7 +214,7 @@
                 <div class="media-body">
                     <p class="media-heading"><a href="#"><%=p.getFrom().getName() %></a></p>
                     <p class="element"><%=p.getCreatedTime()%></p>
-                <%if(p.getMessage() != null) {%>    
+                <%if(p.getMessage() != null) {%>
                     <p class="element"><%=p.getMessage() %></p>
                 <%}%>
                 <%if(url != null) {%>
