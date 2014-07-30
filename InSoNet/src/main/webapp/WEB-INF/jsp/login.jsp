@@ -55,23 +55,26 @@
             <form  role="form" action="<c:url value='j_spring_security_check'/>" method='POST'>
                 <div class="form-group">
                     <label for="j_username" lang="es">Usuario</label>
-                    <input type="text" class="form-control" id="j_username" name="j_username" placeholder="Ingrese nombre de usuario"/>
+                    <input type="text" class="form-control" id="j_username" name="j_username" tabindex="1" placeholder="Ingrese nombre de usuario" aria-describedby="username"/>
+                    <div id="username" class="tooltip" role="tooltip">Ingresar el nombre de usuario es obligatorio</div>
                 </div>
                 <div class="form-group">
                     <label for="j_password" lang="es">Contraseña</label>
-                    <input type="password" class="form-control" id="j_password" name="j_password" placeholder="Ingrese contraseña"/>
+                    <input type="password" class="form-control" id="j_password" name="j_password" tabindex="2" placeholder="Ingrese contraseña" aria-describedby="password"/>
+                    <div id="password" class="tooltip" role="tooltip">Ingresar la contraseña es obligatorio</div>
                 </div>
                 <div class="form-group">
                     
                         <div class="checkbox">
-                            <label>
-                                <input type="checkbox"> Recordarme
+                            <label for="remember">
+                                <input type="checkbox" name="remember-me" id="remember" tabindex="3" aria-describedby="rememberTooltip" > Recordarme
                             </label>
+                            <div id="rememberTooltip" class="tooltip" role="tooltip">Seleccione con barra espaciadora y su sesión no se cerrara aunque cierre el navegador</div>
                         </div>
                     
                 </div>
-                <button type="submit" class="btn btn-default" title="Iniciar sesión" lang="es">Enviar</button>
-                &nbsp;&nbsp;<a href="./signup" title="Crear cuenta en InSoNet">Registrarse</a>
+                <button type="submit" class="btn btn-default" title="Iniciar sesión" lang="es" tabindex="4">Enviar</button>
+                &nbsp;&nbsp;<a href="./signup" title="Crear cuenta en InSoNet" tabindex="5">Registrarse</a>
                 
             </form>
                    
@@ -83,6 +86,10 @@
     
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="<c:url value='/resources/js/bootstrap.min.js'/>"></script>
-
+<script>
+$(document).ready(function(){
+    $("#j_username").focus();
+});
+</script>
 </body>
 </html>

@@ -294,6 +294,32 @@ public class FacebookServiceImpl implements Serializable {
 		return result;
 	}
 	
+	public String likeComment(String id, String commId) throws ServletException {
+		String result = "nok";
+		
+		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
+		Facebook facebook = (Facebook) request.getSession().getAttribute("facebook");
+		if(facebook == null) {
+			facebook = new FacebookFactory().getInstance();
+			request.getSession().setAttribute("facebook", facebook);
+		}
+		SocialNetwork sn = socialNetworkDAO.getSocialNetwork(Integer.parseInt(id));
+		try {
+			AccessToken accesstokenDB = sn.getAccessToken();
+			facebook4j.auth.AccessToken accesstoken = new facebook4j.auth.AccessToken(accesstokenDB.getAccessToken());
+			facebook.setOAuthAccessToken(accesstoken);
+			if(facebook.comments().likeComment(commId)) {
+				result = "ok";
+			}
+		
+		} catch (FacebookException e) {
+			throw new ServletException(e);
+		}
+		
+		return result;
+	}
+	
+	
 	public List<SocialNetwork> getVisiblesSocialNetworks() {
 		List<SocialNetwork> aux = new ArrayList<SocialNetwork>();
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
@@ -389,6 +415,30 @@ public class FacebookServiceImpl implements Serializable {
 		return commList;
 	}
 	
+	public String likePost(String id, String postId) throws ServletException {
+		String result = "nok";
+		
+		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
+		Facebook facebook = (Facebook) request.getSession().getAttribute("facebook");
+		if(facebook == null) {
+			facebook = new FacebookFactory().getInstance();
+			request.getSession().setAttribute("facebook", facebook);
+		}
+		SocialNetwork sn = socialNetworkDAO.getSocialNetwork(Integer.parseInt(id));
+		try {
+			AccessToken accesstokenDB = sn.getAccessToken();
+			facebook4j.auth.AccessToken accesstoken = new facebook4j.auth.AccessToken(accesstokenDB.getAccessToken());
+			facebook.setOAuthAccessToken(accesstoken);
+			if(facebook.posts().likePost(postId)) {
+				result = "ok";
+			}
+		
+		} catch (FacebookException e) {
+			throw new ServletException(e);
+		}
+		
+		return result;
+	}
 	public ResponseList<Notification> getNotifications() {
 		
 		ResponseList<Notification> noti = null;

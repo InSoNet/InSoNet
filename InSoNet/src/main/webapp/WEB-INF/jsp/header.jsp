@@ -47,13 +47,53 @@
   <c:when test="${domainUser.isEnabled() == true}">
         <nav class="navbar navbar-default" role="navigation">
             <div class="col-lg-6">
-                <form  role="form" id="formMessage">
+                <form action="${pageContext.request.contextPath}/facebook/post/add" method="post" role="form" id="formMessage" enctype="multipart/form-data">
                 <div class="input-group">                    
                     <input name="messageTxt" id="messageTxt" type="text" class="form-control" placeholder="Escribir mensaje..." required/>
                     <div class="input-group-btn">
-                        <button type="button" class="btn btn-default" name="privacidad" title="Privacidad de mensaje"><span class="glyphicon glyphicon-lock"></span></button>
-                        <button class="btn btn-default" type="button" title="Adjuntar foto">Adjuntar Foto</button>
+                        <button type="button" class="btn btn-default" name="privacidad" title="Privacidad de mensaje" data-toggle="modal" data-target="#modalPrivacidad"><span class="glyphicon glyphicon-lock"></span></button>
+                        <button id="adjuntar" class="btn btn-default" type="button" title="Adjuntar foto">Adjuntar Foto</button>
                         <button type="submit" id="publishingButton" class="btn btn-default" title="Publicar mensaje" lang="es">Enviar</button>
+                        <input type="file" id="filePhoto" name="filePhoto" class="hidden">
+                        <div class="modal fade" id="modalPrivacidad" tabindex="-1" role="dialog" aria-labelledby="Privacidad" aria-hidden="true">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                <h4 class="modal-title">Elija nivel de privacidad</h4>
+                              </div>
+                              <div class="modal-body">
+                                  <div class="radio">
+                                      <label>
+                                        <input type="radio" name="privacy" id="privacity1" value="SELF" title="Solo Yo">
+                                        Solo Yo
+                                      </label>
+                                  </div>
+                                  <div class="radio">
+                                      <label>
+                                        <input type="radio" name="privacy" id="privacity2" value="FRIENDS_OF_FRIENDS" title="amigos de mis amigos">
+                                        Amigos de mis amigos
+                                      </label>
+                                  </div>
+                                  <div class="radio">
+                                      <label>
+                                        <input type="radio" name="privacy" id="privacity3" value="ALL_FRIENDS" title="Amigos">
+                                        Amigos
+                                      </label>
+                                  </div>
+                                  <div class="radio">
+                                      <label>
+                                        <input type="radio" name="privacy" id="privacity4" value="EVERYONE" title="Público">
+                                        Público
+                                      </label>
+                                  </div>                                                    
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                              </div>
+                            </div><!-- /.modal-content -->
+                          </div><!-- /.modal-dialog -->
+                        </div><!-- /.modal -->
                     </div>
                 </div>
                 <div id="noticeMessage" class=""></div>

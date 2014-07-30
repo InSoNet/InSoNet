@@ -24,7 +24,6 @@
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <script src="<c:url value='/resources/js/jquery.js'/>"></script>
 <script src="<c:url value='/resources/js/jquery.validate.js'/>"></script>
-<script src="http://malsup.github.com/jquery.form.js"></script> 
 <script src="<c:url value='/resources/js/insonetCore.js'/>" type="text/javascript"></script>
 <!-- conditional comments -->
 <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -46,14 +45,15 @@
   <c:when test="${domainUser.isEnabled() == true}">
         <nav class="navbar navbar-default" role="navigation">
             <div class="col-lg-6">
-                <form action="${pageContext.request.contextPath}/facebook/post/add" method="post" role="form" id="formMessage" enctype="multipart/form-data">
-                <div class="input-group">                    
-                    <input name="messageTxt" id="messageTxt" type="text" class="form-control" placeholder="Escribir mensaje..." required/>
+                <form action="${pageContext.request.contextPath}/facebook/post/add" method="post" onSubmit="validate();return false;" role="form" id="formMessage" enctype="multipart/form-data">
+                <div class="input-group">                   
+                    <input name="messageTxt" id="messageTxt" type="text" class="form-control" placeholder="Escribir mensaje..." aria-describedby="mtxt" required/>
+                    <div id="mtxt" class="tooltip" role="tooltip">Escriba el mensaje y seleccione las redes para postearlo</div>
                     <div class="input-group-btn">
                         <button type="button" class="btn btn-default" name="privacidad" title="Privacidad de mensaje" data-toggle="modal" data-target="#modalPrivacidad"><span class="glyphicon glyphicon-lock"></span></button>
-                        <button id="adjuntar" class="btn btn-default" type="button" title="Adjuntar foto">Adjuntar Foto</button>
+                        <button id="adjuntar" class="btn btn-default" type="button" title="Adjuntar foto" lang="es">Adjuntar Foto</button>
                         <button type="submit" id="publishingButton" class="btn btn-default" title="Publicar mensaje" lang="es">Enviar</button>
-                        <input type="file" id="filePhoto" name="filePhoto" class="hidden">
+                        <input type="file" id="filePhoto" name="filePhoto" class="hidden" title="Foto adjunta" aria-hidden="true"/>
                         <div class="modal fade" id="modalPrivacidad" tabindex="-1" role="dialog" aria-labelledby="Privacidad" aria-hidden="true">
 						  <div class="modal-dialog">
 						    <div class="modal-content">
@@ -63,28 +63,24 @@
 						      </div>
 						      <div class="modal-body">
 							      <div class="radio">
-									  <label>
-									    <input type="radio" name="privacy" id="privacity1" value="SELF" title="Solo Yo">
-									    Solo Yo
-									  </label>
+									  
+									  <input type="radio" name="privacy" id="privacity1" value="SELF" title="Solo Yo">
+									  <label for="privacity1">Solo Yo</label>
 								  </div>
 							      <div class="radio">
-									  <label>
+									  
 									    <input type="radio" name="privacy" id="privacity2" value="FRIENDS_OF_FRIENDS" title="amigos de mis amigos">
-									    Amigos de mis amigos
-									  </label>
+									  <label for="privacity2">Amigos de mis amigos</label>  
 								  </div>
 								  <div class="radio">
-									  <label>
+									  
 									    <input type="radio" name="privacy" id="privacity3" value="ALL_FRIENDS" title="Amigos">
-									    Amigos
-									  </label>
+									  <label for="privacity3">Amigos</label>  
 								  </div>
 								  <div class="radio">
-	                                  <label>
-	                                    <input type="radio" name="privacy" id="privacity4" value="EVERYONE" title="Público">
-	                                    Público
-	                                  </label>
+	                                  
+	                                  <input type="radio" name="privacy" id="privacity4" value="EVERYONE" title="Público" checked>
+	                                  <label for="privacity4">Público</label>  
 	                              </div>						      				        
 						      </div>
 						      <div class="modal-footer">
@@ -93,24 +89,22 @@
 						    </div><!-- /.modal-content -->
 						  </div><!-- /.modal-dialog -->
 						</div><!-- /.modal -->
+                    <input type="submit" name="submit" value="enviar"/>
                     </div>
                 </div>
                 <div id="noticeMessage" class=""></div>
-                <label for="messageTxt" class="error hidden" style="display:none important;">Escriba un mensaje</label>
+                <label for="messageTxt" class="error hidden" style="display:none important;" aria-hidden="true">Escriba un mensaje</label>
                 <div class="checkbox-block input-sm">
-                    <label>Publicar en:</label>
-                    <label>
-                        <input name="publishingIn" type="checkbox" value="Facebook" title="Publicar en Facebook" <%if(fb.getVisiblesSocialNetworks().isEmpty()){ %>disabled<%} %>/>
-                        Facebook
-                    </label>
-                    <label>
-                        <input name="publishingIn" type="checkbox" value="Twitter" title="Publicar en Twitter" <c:if test="${domainUser.getSocialNetwork().isEmpty()}">disabled</c:if>>
-                        Twitter
-                    </label>
-                    <label>
-                        <input name="publishingIn" type="checkbox" value="Todos" title="Publicar en todos" <c:if test="${domainUser.getSocialNetwork().isEmpty()}">disabled</c:if>>
-                        Todos
-                    </label>
+                    <span>Publicar en:</span>
+                    
+                    <input name="publishingIn" id="network1" type="checkbox" value="Facebook" title="Publicar en Facebook" <%if(fb.getVisiblesSocialNetworks().isEmpty()){ %>disabled<%} %>/>
+                    <label for="network1">Facebook</label>
+                    
+                    <input name="publishingIn" id="network2" type="checkbox" value="Twitter" title="Publicar en Twitter" <c:if test="${domainUser.getSocialNetwork().isEmpty()}">disabled</c:if>>
+                    <label for="network2">Twitter</label>
+                    
+                    <input name="publishingIn" id="network3" type="checkbox" value="Todos" title="Publicar en todos" <c:if test="${domainUser.getSocialNetwork().isEmpty()}">disabled</c:if>>
+                    <label for="network3">Todos</label>
                 </div>
                 </form>
                 <div>
@@ -129,7 +123,7 @@
                         <div class="input-group">
                             <input type="text" id="searchTxt" name="searchTxt" class="form-control" placeholder="Buscar Personas, Páginas, etc." required <c:if test="${domainUser.getSocialNetwork().isEmpty()}">disabled</c:if>/>
                             <div class="input-group-btn">
-                                <button type="submit" id="searchButton" class="btn btn-default <c:if test='${domainUser.getSocialNetwork().isEmpty()}'>disabled</c:if>" title="Buscar">Buscar</button>
+                                <button type="submit" id="searchButton" class="btn btn-default <c:if test='${domainUser.getSocialNetwork().isEmpty()}'>disabled</c:if>" title="Buscar" lang="es">Buscar</button>
                             </div>
                         </div>
                         <div id="alertSearch" class=""></div>
@@ -220,7 +214,8 @@
                 <%if(url != null) {%>
 	                <img class="media-object" src="<%=url.toString()%>" alt="Foto que publico <%=p.getFrom().getName() %>" class="img-thumbnail" style="width:140px; height:180px;">
 	            <%}%>
-                    <a href="#" title="Marcar con me gusta">Me gusta</a> . <a href="#" title="Comentar">Comentar</a> . <a href="#" title="Compartir">Compartir</a>
+	            
+                    <a id="likePost-<%=p.getId()%>-<%=n.getId()%>" href="#" title="Marcar con me gusta">Me gusta</a> . <a href="#" title="Comentar">Comentar</a> . <a href="#" title="Compartir">Compartir</a>
                 </div>
             <%}%>
             </div>
@@ -235,7 +230,7 @@
                     <div class="media-body">
                         <p class="media-heading"><a href="#"><%=c.getFrom().getName() %></a> comentario</p>
                         <p class="element"><%=c.getMessage() %></p>
-                        <a href="#" title="Marcar con me gusta">Me gusta</a>
+                        <a id="likeComm-<%=c.getId()%>-<%=n.getId()%>" href="#" title="Marcar con me gusta">Me gusta</a>
                     </div>
                 </li>
             </ul>
@@ -250,17 +245,20 @@
                         </a>
                         <div class="media-body">
                             <form id="commentForm-<%=p.getId()%>" role="form">
-                                <input type="hidden" id="commentHidden-<%=p.getId()%>" value="<%=n.getId()%>"/>
+                                <input type="hidden" name="commentHidden" id="commentHidden-<%=p.getId()%>" value="<%=n.getId()%>" title="Post a comentar"/>
                                 <div class="input-group">
-                                    <input type="text" id="comment-<%=p.getId()%>" name="comment-<%=p.getId()%>" class="form-control" placeholder="Escribe un comentario" required/>
+                                    <input type="text" id="comment-<%=p.getId()%>" alt="Escribe un comentario" title="Escribe un comentario" name="comment-<%=p.getId()%>" class="form-control" placeholder="Escribe un comentario" aria-describedby="tp<%=p.getId()%>" required/>
                                     <span class="input-group-btn">
-                                        <button class="btn btn-default" type="button" title="Adjuntar foto a comentario">Adjuntar Foto</button>
-                                    </span>                                            
+                                        <button type="button" id="pictureComm-<%=p.getId()%>" class="btn btn-default" title="Adjuntar foto a comentario">Adjuntar Foto</button>
+                                    </span>
+                                    <input type="file" name="adPicture" id="adPicture-<%=p.getId()%>" class="hidden" title="Adjuntar foto" aria-hidden="true"/>                              
                                 </div>
                                 <div class="input-group">
                                     <label for="comment-<%=p.getId()%>" class="error hidden" style="display:none important;">Escriba un mensaje</label>
                                     <span class="help-block">Presione enter para postear</span>
+                                    <div id="tp<%=p.getId()%>" class="tooltip" role="tooltip">Presione enter para postear</div>
                                 </div>
+                                <input type="submit" name="comments" value="enviar" alt="comentar" class="hidden" aria-hidden="true"/>
                             </form>
                         </div>
                     

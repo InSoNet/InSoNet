@@ -18,13 +18,13 @@
         <intercept-url pattern="/admin/*" access="ROLE_ADMIN" />
         <intercept-url pattern="/**" access="ROLE_USER" />
         <form-login login-page="/login" default-target-url="/index" authentication-failure-url="/login?error" />
-        <logout logout-success-url="/login?logout" logout-url="/j_spring_security_logout" />
-    </http>    
+        <logout logout-success-url="/login?logout" logout-url="/j_spring_security_logout" delete-cookies="JSESSIONID" />
+        <!-- enable remember me -->
+        <remember-me token-validity-seconds="1209600" remember-me-parameter="remember-me" data-source-ref="dataSource" />
+    </http>
     <authentication-manager>
         <authentication-provider user-service-ref="insonetUserDetailsService">
             <password-encoder hash="plaintext" />        
         </authentication-provider>
-    </authentication-manager>
-    
-    
+    </authentication-manager>    
 </beans:beans>

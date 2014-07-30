@@ -29,4 +29,15 @@ public class CommentController {
 		
 		return result;
 	}
+	
+	@RequestMapping(value="/facebook/{id}/comment/like", method=RequestMethod.GET)
+	@ResponseBody
+	public String like(@RequestParam(value = "c", required = true) String c,
+			@PathVariable String id) throws Exception {
+		String result = "nok";
+		
+		result = facebookService.likeComment(id, c);
+				
+		return result;
+	}
 }

@@ -115,6 +115,17 @@ public class PostController {
 		return result;
 	}
 	
+	@RequestMapping(value="/facebook/{id}/post/like", method=RequestMethod.GET)
+	@ResponseBody
+	public String like(@RequestParam(value="p", required = true) String p,
+			@PathVariable String id) throws Exception {
+		String result = "nok";
+		
+		result = fbService.likePost(id, p);
+				
+		return result;
+	}
+	
 	@RequestMapping(value="/facebook/{fb}/post/{id}", method=RequestMethod.GET)
 	public Post show(@PathVariable int fb, @PathVariable String id, HttpServletRequest request) throws FacebookException {
 		//ResponseList<Post> list = null;
@@ -135,6 +146,7 @@ public class PostController {
 		
 		return posts;
 	}
+	
 	/*@RequestMapping(value="/facebook/{fb}/delete/{id}", method=RequestMethod.GET)
 	public boolean publishing(int fb, String id, HttpServletRequest request) {
 		boolean result = fbService().delPost(fb, id, request);

@@ -108,6 +108,47 @@ function addComment(net, text, post) {
 	
 	return response;
 }
+
+function likeComment(net, commId) {
+	var url = getURL() + "/facebook/" + net + "/comment/like";  
+	var response;
+	
+	$.ajax({
+		type: "GET",
+		url: url,
+		data: "c=" + commId,
+		async: false,
+		success: function (result) {
+            response = result;
+        },
+        error: function (datosError) {
+            console.log(datosError.responseText);
+        }
+	});
+	
+	return response;
+}
+
+function likePost(net, postId) {
+	var url = getURL() + "/facebook/" + net + "/post/like";  
+	var response;
+	
+	$.ajax({
+		type: "GET",
+		url: url,
+		data: "p=" + postId,
+		async: false,
+		success: function (result) {
+            response = result;
+        },
+        error: function (datosError) {
+            console.log(datosError.responseText);
+        }
+	});
+	
+	return response;
+}
+
 function addPost(net, text) {
 	var url = "http://localhost:8080/InSoNet/" + net + "/post/add";
 	var response;
@@ -226,20 +267,36 @@ function publishing() {
 	return { result : response, message : noticeAlert + forNet };
 }
 
-$(document).ready(function() {
-	
-	
-	 
-	$('input[type=file]').on('change', prepareUpload);
-	 
-	function prepareUpload(event)
-	{
-		files = event.target.files;
-	}
+function validate() {
 	
 	var hiddenBox = $('#noticeMessage');
-	var audio = $('#noticeAudio');
+	validFormJson = validForm("#formMessage");
+	publishingJson = {};
+	if(validFormJson.result === true) {
+		//document.getElementById("formMessage").submit();
+		return true;
+	} else {
+		hiddenBox.addClass("alert alert-success");
+		//hiddenBox.show();
+		hiddenBox.html(validFormJson.message);
+		
+		return false;
+	}
+			
+}
+
+$(document).ready(function() {
+	 
 	if(window.FormData !== undefined) {
+		$('input[type=file]').on('change', prepareUpload);
+		 
+		function prepareUpload(event)
+		{
+			files = event.target.files;
+		}
+		
+		var hiddenBox = $('#noticeMessage');
+		var audio = $('#noticeAudio');
 		$('#publishingButton').on( "click", function( event ) {
 			
 			validFormJson = validForm("#formMessage");
@@ -272,38 +329,7 @@ $(document).ready(function() {
 				}
 			
 		});
-	} 
-	
-	/*$('#formMessage').on( "submit", function( event ) {
-		event.stopPropagation(); // Stop stuff happening
-		event.preventDefault(); // Totally stop stuff happening
-		validFormJson = validForm("#formMessage");
-		publishingJson = {};
-		if(validFormJson.result === true) {
-			publishingJson = publishing(event);
-			
-		} else {
-			hiddenBox.addClass("alert alert-success");
-			//hiddenBox.show();
-			hiddenBox.html(validFormJson.message);
-		}
-		
-		if(publishingJson.result === true) {
-			hiddenBox.addClass("alert alert-success");
-			//hiddenBox.show();
-			hiddenBox.html(publishingJson.message);
-		} else {
-			//audio.attr("src", "/InSoNet/resources/audio/no-se-pudo-publicar-mensaje.wma");
-			document.getElementById("noticeAudio").load();
-			document.getElementById("noticeAudio").play();
-			//audio.load();
-			//audio.play;
-		}
-		
-			
-	});*/
-	
-	
+	}
 });
 	
 
@@ -373,12 +399,48 @@ $(document).ready(function(){
 				
 	});
 	
+	$("[id^='likeComm-']").on("click", function(event){
+		var ids = this.id.split("-");
+		response = likeComment(ids[2], ids[1]);
+	    if(response == "ok") {
+	    	$("#" + this.id).html("Ya no me gusta");
+	    	$("#" + this.id).attr("id", "unlikeComm-" + ids[1] + "-"+ ids[2]);
+	    } else {
+	    	alert("Vuelva a intentar mas tarde.");
+	    }				
+	});
+	
+	$("[id^='unlikeComm-']").on("click", function(event){
+		alert("Aun no esta implementado");
+	    
+	});
+	
+	$("[id^='likePost-']").on("click", function(event){
+		var ids = this.id.split("-");
+		response = likePost(ids[2], ids[1]);
+	    if(response == "ok") {
+	    	$("#" + this.id).html("Ya no me gusta");
+	    	$("#" + this.id).attr("id", "unlikePost-" + ids[1] + "-"+ ids[2]);
+	    } else {
+	    	alert("Vuelva a intentar mas tarde.");
+	    }
+	});
+	$("[id^='unlikePost-']").on("click", function(event){
+		alert("Aun no esta implementado");
+	    
+	});
+	
 	$('#adjuntar').on("click", function(event){
 		$('#filePhoto').click();
 	});
 	
 	$("input[name='privacy']").on("change", function(event) {
 		//alert($("input[name='privacy']:checked").val());
+	});
+	
+	$("[id^='pictureComm-']").on("click", function(event){
+		var arrId = this.id.split("-");
+		$("#adPicture-" + arrId[1]).click();
 	});
 });
 

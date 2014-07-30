@@ -48,14 +48,15 @@
   <c:when test="${domainUser.isEnabled() == true}">
         <nav class="navbar navbar-default" role="navigation">
             <div class="col-lg-6">
-                <form  role="form" id="formMessage">
-                <div class="input-group">                    
-                    <input name="messageTxt" id="messageTxt" type="text" class="form-control" placeholder="Escribir mensaje..." required/>
+                <form action="${pageContext.request.contextPath}/post/add" onSubmit="validate();return false;" method="post" role="form" id="formMessage" enctype="multipart/form-data">
+                <div class="input-group">                   
+                    <input name="messageTxt" id="messageTxt" type="text" class="form-control" placeholder="Escribir mensaje..." aria-describedby="mtxt" required/>
+                    <div id="mtxt" class="tooltip" role="tooltip">Escriba el mensaje y seleccione las redes para postearlo</div>
                     <div class="input-group-btn">
                         <button type="button" class="btn btn-default" name="privacidad" title="Privacidad de mensaje" data-toggle="modal" data-target="#modalPrivacidad"><span class="glyphicon glyphicon-lock"></span></button>
                         <button id="adjuntar" class="btn btn-default" type="button" title="Adjuntar foto">Adjuntar Foto</button>
                         <button type="submit" id="publishingButton" class="btn btn-default" title="Publicar mensaje" lang="es">Enviar</button>
-                        <input type="file" id="filePhoto" class="hidden">
+                        <input type="file" id="filePhoto" name="filePhoto" class="hidden">
                         <div class="modal fade" id="modalPrivacidad" tabindex="-1" role="dialog" aria-labelledby="Privacidad" aria-hidden="true">
                           <div class="modal-dialog">
                             <div class="modal-content">
@@ -64,22 +65,33 @@
                                 <h4 class="modal-title">Elija nivel de privacidad</h4>
                               </div>
                               <div class="modal-body">
-                                <label>
-                                  <input type="checkbox" value="SELF" title="Solo para mi"/>Solo para mi
-                                </label>
-                                <label>
-                                  <input type="checkbox" value="FRIENDS_OF_FRIENDS" title="Para amigos de mis amigos"/>Amigos de amigos
-                                </label>
-                                <label>
-                                  <input type="checkbox" value="ALL_FRIENDS" title="Para todos los amigos"/>Amigos
-                                </label>
-                                <label>
-                                  <input type="checkbox" value="EVERYONE" title="Para todos"/>Todos                               
-                                </label>
+                                  <div class="radio">
+                                      <label>
+                                        <input type="radio" name="privacy" id="privacity1" value="SELF" title="Solo Yo">
+                                        Solo Yo
+                                      </label>
+                                  </div>
+                                  <div class="radio">
+                                      <label>
+                                        <input type="radio" name="privacy" id="privacity2" value="FRIENDS_OF_FRIENDS" title="amigos de mis amigos">
+                                        Amigos de mis amigos
+                                      </label>
+                                  </div>
+                                  <div class="radio">
+                                      <label>
+                                        <input type="radio" name="privacy" id="privacity3" value="ALL_FRIENDS" title="Amigos">
+                                        Amigos
+                                      </label>
+                                  </div>
+                                  <div class="radio">
+                                      <label>
+                                        <input type="radio" name="privacy" id="privacity4" value="EVERYONE" title="Público" checked>
+                                        Público
+                                      </label>
+                                  </div>                                                    
                               </div>
                               <div class="modal-footer">
                                 <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                                <button type="button" class="btn btn-primary">Guardar</button>
                               </div>
                             </div><!-- /.modal-content -->
                           </div><!-- /.modal-dialog -->
@@ -118,13 +130,13 @@
                 <div>
                     <form id="searchForm" action="search" method="post" style="margin-top:0px;padding-left:0px;" role="search">
                         <div class="input-group">
-                            <input type="text" id="searchTxt" name="searchTxt" class="form-control" placeholder="Buscar Personas, Páginas, etc." required />
+                            <input type="text" id="searchTxt" name="searchTxt" class="form-control" placeholder="Buscar Personas, Páginas, etc." required <c:if test="${domainUser.getSocialNetwork().isEmpty()}">disabled</c:if>/>
                             <div class="input-group-btn">
-                                <button type="submit" id="searchButton" class="btn btn-default" title="Buscar">Buscar</button>
+                                <button type="submit" id="searchButton" class="btn btn-default <c:if test='${domainUser.getSocialNetwork().isEmpty()}'>disabled</c:if>" title="Buscar">Buscar</button>
                             </div>
                         </div>
                         <div id="alertSearch" class=""></div>
-                        <label for="searchTxt" class="error hidden" style="display:none important;">Escriba un algo</label>
+                        <label for="searchTxt" class="error hidden" style="display:none important;">Escriba algo</label>
                     </form>
                 </div>
                 <div>
